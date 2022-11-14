@@ -27,6 +27,8 @@ Click on `Use this template`
 
 ### Plugin structure
 
+(WIP)
+
 ```
 .
 ├── lua
