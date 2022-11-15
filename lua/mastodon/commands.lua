@@ -1,6 +1,12 @@
 -- module represents a lua module for the plugin
 local M = {}
 
+vim.notify = require("notify")
+
+vim.notify.setup({
+  background_colour = "#000000"
+})
+
 local utils = require('mastodon.utils')
 
 M.greeting = function()
@@ -30,6 +36,11 @@ M.toot_message = function(message)
   cmd = cmd .. "}'"
 
   local response = utils.execute_curl(cmd)
+  local message = utils.parse_json(response)["content"]
+  vim.notify(message, "info", {
+    title = "(Mastodon.nvim) 툿 게시 성공!"
+  })
+
   return response
 end
 

@@ -26,7 +26,7 @@ end
 
 M.toot_message = function(opts)
   local message = opts.args
-  print(commands.toot_message(message))
+  commands.toot_message(message)
 end
 
 return M
