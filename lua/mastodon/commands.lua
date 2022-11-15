@@ -19,6 +19,7 @@ M.toot_message = function(message)
   local access_token = os.getenv("MASTODON_ACCESS_TOKEN")
 
   cmd = cmd .. " " .. "'https://social.silicon.moe/api/v1/statuses'"
+  cmd = cmd .. " -s"
   cmd = cmd .. " -X " .. "POST"
   cmd = cmd .. " -H " .. "'Accept: application/json'"
   cmd = cmd .. " -H " .. "'Content-Type: application/json'"
