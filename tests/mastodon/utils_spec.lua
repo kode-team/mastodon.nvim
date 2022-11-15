@@ -1,0 +1,15 @@
+local utils = require("mastodon.utils")
+
+describe("utils", function()
+  describe("parse_json", function()
+    it("works with simple structure", function()
+      json = utils.parse_json('{"hello": "world"}')
+      assert(json["hello"] == "world")
+    end)
+
+    it("works with nested json structure", function()
+      json = utils.parse_json('{"a": {"b": "c"}}')
+      assert(json["a"]["b"] == "c")
+    end)
+  end)
+end)

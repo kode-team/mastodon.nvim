@@ -8,4 +8,9 @@ M.execute_curl = function(curl_command)
   return response
 end
 
+M.parse_json = function(response)
+  result = vim.fn.json_decode(response)
+  return result
+end
+
 return M
