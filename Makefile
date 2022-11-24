@@ -1,6 +1,10 @@
 TESTS_INIT=tests/minimal_init.lua
 TESTS_DIR=tests/
 
+.EXPORT_ALL_VARIABLES:
+
+PROJECT_ENV = test
+
 .PHONY: test
 
 test:
