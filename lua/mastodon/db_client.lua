@@ -97,7 +97,7 @@ end
 function M:select_account(params)
   self:bootstrap(nil)
   return self.db:with_open(function(db)
-    return db:select("mastodon_accounts", params)
+    return db:select("mastodon_accounts", { where = params })
   end)
 end
 
