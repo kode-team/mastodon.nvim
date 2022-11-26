@@ -78,7 +78,7 @@ M.add_account = function()
 
     response = utils.execute_curl(cmd)
     json = utils.parse_json(response)
-    local username = json['display_name'] .. "(@" .. json['username'] .. ")"
+    local username = json['display_name'] .. "<@" .. json['username'] .. ">"
     local description = json['source']['note']
 
     db_client:add_account({
