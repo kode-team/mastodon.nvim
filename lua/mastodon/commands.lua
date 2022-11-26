@@ -96,17 +96,28 @@ end
 
 M.select_account = function()
   local accounts = db_client:get_all_accounts()
-  local length = table.getn(accounts)
+  local length = #accounts
 
   if length == 0 then
     return nil
   end
 
+  local active_accounts = db_client:get_active_account()
+  if #active_accounts == 0 then
+    active_account = nil
+  else
+    active_account = active_accounts[1]
+  end
   selected_account = nil
   vim.ui.select(accounts, {
     prompt = 'Select your mastodon account',
     format_item = function(account)
-      return account.username .. " / " .. account.instance_url
+      local formatted_name = ''
+
+      if active_account ~= nil and account.id == active_account.id then
+        formatted_name = formatted_name .. '(selected) '
+      end
+      return formatted_name .. account.username .. " / " .. account.instance_url
     end
   }, function(account)
     local params = { id = account.id }
