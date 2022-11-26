@@ -37,4 +37,13 @@ M.add_account = function()
     vim.notify("Failed to adding your account", vim.log.levels.ERROR)
   end
 end
+
+M.select_account = function()
+  local account = commands.select_account()
+  if account ~= nil then
+  else
+    vim.notify("You need to add account using :MastodonAddAccount", vim.log.levels.ERROR)
+  end
+end
+
 return M

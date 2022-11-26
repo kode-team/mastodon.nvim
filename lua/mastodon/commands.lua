@@ -1,4 +1,6 @@
 -- module represents a lua module for the plugin
+local db_client = require("mastodon.db_client")
+
 local M = {}
 
 vim.notify = require("notify")
@@ -16,9 +18,12 @@ end
 M.toot_message = function(message)
   local cmd = "curl"
 
-  local access_token = os.getenv("MASTODON_ACCESS_TOKEN")
+  local active_account = db_client:get_active_account()[1]
 
-  cmd = cmd .. " " .. "'https://social.silicon.moe/api/v1/statuses'"
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  cmd = cmd .. " " .. "'" .. instance_url .. "/api/v1/statuses'"
   cmd = cmd .. " -s"
   cmd = cmd .. " -X " .. "POST"
   cmd = cmd .. " -H " .. "'Accept: application/json'"
@@ -88,4 +93,31 @@ M.add_account = function()
     return true
   end
 end
+
+M.select_account = function()
+  local accounts = db_client:get_all_accounts()
+  local length = table.getn(accounts)
+
+  if length == 0 then
+    return nil
+  end
+
+  selected_account = nil
+  vim.ui.select(accounts, {
+    prompt = 'Select your mastodon account',
+    format_item = function(account)
+      return account.username .. " / " .. account.instance_url
+    end
+  }, function(account)
+    local params = { access_token = account.access_token, instance_url = instance_url }
+    db_client:set_active_account(params)
+    vim.notify("Logged in to " .. account.username .. ' / ' .. account.instance_url)
+    selected_account = account
+
+    return account
+  end)
+
+  return selected_account
+end
+
 return M

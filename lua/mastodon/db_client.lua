@@ -73,6 +73,20 @@ function M:get_active_account()
   return self:select_account({ is_active = true })
 end
 
+function M:set_active_account(params)
+  self:bootstrap(nil)
+  return self.db:with_open(function(db)
+    db:update("mastodon_accounts", {
+      set = { is_active = false}
+    })
+    db:update("mastodon_accounts", {
+      where = params,
+      set = { is_active = true }
+    })
+    return true
+  end)
+end
+
 function M:add_account(params)
   self:bootstrap(nil)
   return self.db:with_open(function(db)
