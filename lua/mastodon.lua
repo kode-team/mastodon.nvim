@@ -29,4 +29,12 @@ M.toot_message = function(opts)
   commands.toot_message(message)
 end
 
+M.add_account = function()
+  local result = commands.add_account()
+  if result ~= true then
+    vim.notify("Successfully added your account!")
+  else
+    vim.notify("Failed to adding your account", vim.log.levels.ERROR)
+  end
+end
 return M
