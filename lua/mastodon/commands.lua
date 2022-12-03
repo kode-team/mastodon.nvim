@@ -131,4 +131,38 @@ M.select_account = function()
   return selected_account
 end
 
+M.fetch_home_timeline = function()
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local cmd = 'curl'
+
+  cmd = cmd .. " " .. "'" .. instance_url .. "/api/v1/timelines/home"
+
+  cmd = cmd .. "'"
+  cmd = cmd .. " -s"
+  cmd = cmd .. " -X " .. "GET"
+  cmd = cmd .. " -H " .. "'Accept: application/json'"
+  cmd = cmd .. " -H " .. "'Content-Type: application/json'"
+  cmd = cmd .. " -H " .. "'Authorization: Bearer " .. access_token .. "'"
+
+  local response = utils.execute_curl(cmd)
+  local statuses = utils.parse_json(response)
+
+  for i, status in ipairs(statuses) do
+    local account = status['account']
+    if account ~= nil then
+      local message = "@" .. account['username']
+      message = message .. "(" .. (account['display_name']) .. ")"
+      message = message .. "\n"
+      message = message .. status['content']
+      message = message .. "\n" .. "-----------------------------------------"
+      print(message)
+    end
+  end
+end
+
 return M

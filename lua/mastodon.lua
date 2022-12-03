@@ -46,4 +46,8 @@ M.select_account = function()
   end
 end
 
+M.fetch_home_timeline = function()
+  commands.fetch_home_timeline()
+end
+
 return M
