@@ -131,12 +131,25 @@ M.select_account = function()
   return selected_account
 end
 
+local function split_by_chunk(text, chunk_size)
+    local s = {}
+    for i=1, #text, chunk_size do
+        s[#s+1] = text:sub(i, i + chunk_size - 1)
+    end
+    return s
+end
+
 M.fetch_home_timeline = function()
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
 
   local access_token = active_account.access_token
   local instance_url = active_account.instance_url
+
+  vim.cmd('vsplit')
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_create_buf(true, true)
+  vim.api.nvim_win_set_buf(win, buf)
 
   local cmd = 'curl'
 
@@ -152,17 +165,29 @@ M.fetch_home_timeline = function()
   local response = utils.execute_curl(cmd)
   local statuses = utils.parse_json(response)
 
+  messages = {}
   for i, status in ipairs(statuses) do
     local account = status['account']
     if account ~= nil then
       local message = "@" .. account['username']
       message = message .. "(" .. (account['display_name']) .. ")"
-      message = message .. "\n"
-      message = message .. status['content']
-      message = message .. "\n" .. "-----------------------------------------"
-      print(message)
+      table.insert(messages, message)
+
+      local whole_message = status['content']
+      local width = vim.api.nvim_win_get_width(win)
+
+      -- (width - 10) interpolates sign column's length and line number column's length
+      chunks = split_by_chunk(whole_message, width - 10)
+      for i, chunk in ipairs(chunks) do
+        table.insert(messages, chunk)
+      end
+
+      message = '-----------------------'
+      table.insert(messages, message)
     end
   end
+
+  vim.api.nvim_buf_set_lines(0, 0, 0, 'true', messages)
 end
 
 return M
