@@ -57,4 +57,8 @@ M.fetch_home_timeline = function()
   commands.fetch_home_timeline()
 end
 
+M.reload_statuses = function()
+  commands.reload_statuses()
+end
+
 return M
