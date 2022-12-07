@@ -1,5 +1,7 @@
 -- module represents a lua module for the plugin
 local db_client = require("mastodon.db_client")
+local api_client= require("mastodon.api_client")
+
 local vim = vim
 
 local M = {}
@@ -142,29 +144,13 @@ end
 
 M.fetch_home_timeline = function()
   local active_accounts = db_client:get_active_account()
-  local active_account = active_accounts[1]
-
-  local access_token = active_account.access_token
-  local instance_url = active_account.instance_url
 
   vim.cmd('vsplit')
   local win = vim.api.nvim_get_current_win()
   local buf = vim.api.nvim_create_buf(true, true)
   vim.api.nvim_win_set_buf(win, buf)
 
-  local cmd = 'curl'
-
-  cmd = cmd .. " " .. "'" .. instance_url .. "/api/v1/timelines/home"
-
-  cmd = cmd .. "'"
-  cmd = cmd .. " -s"
-  cmd = cmd .. " -X " .. "GET"
-  cmd = cmd .. " -H " .. "'Accept: application/json'"
-  cmd = cmd .. " -H " .. "'Content-Type: application/json'"
-  cmd = cmd .. " -H " .. "'Authorization: Bearer " .. access_token .. "'"
-
-  local response = utils.execute_curl(cmd)
-  local statuses = utils.parse_json(response)
+  local statuses = api_client.fetch_home_timeline()
 
   local bufnr = vim.api.nvim_get_current_buf()
 
@@ -199,7 +185,7 @@ M.fetch_home_timeline = function()
     end
   end
 
-
+  vim.api.nvim_buf_set_name(bufnr, "Mastodon Home")
   vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
   vim.api.nvim_buf_set_lines(0, 0, 0, 'true', messages)
   vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
