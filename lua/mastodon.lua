@@ -12,6 +12,13 @@ M.setup = function(args)
   -- you can define your setup function here. Usually configurations can be merged, accepting outside params and
   -- you can also put some validation here for those.
   M.config = vim.tbl_deep_extend("force", M.config, args or {})
+
+  namespace = vim.api.nvim_create_namespace("MastodonNS")
+  vim.api.nvim_set_hl(namespace, "MastodonHandle", {
+    fg = "#000000",
+    bg = "#ffffff",
+    underline = true,
+  })
 end
 
 -- "greeting" is a public method for the plugin
