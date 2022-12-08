@@ -158,15 +158,27 @@ M.fetch_home_timeline = function()
   local mastodon_ns = namespaces['MastodonNS']
 
   messages = {}
+  local metadata = {}
   local line_number = 0
   local line_numbers = {}
   for i, status in ipairs(statuses) do
     local account = status['account']
     if account ~= nil then
       local message = "@" .. account['username']
+      local status_id = status['id']
+      local url = status['uri']
+      local json = vim.fn.json_encode({
+        status_id = status_id,
+        url = url,
+      })
+
       message = message .. "(" .. (account['display_name']) .. ")"
       table.insert(messages, message)
       table.insert(line_numbers, line_number)
+      table.insert(metadata, {
+        line_number = line_number,
+        data = json,
+      })
       line_number = line_number + 1
 
       local whole_message = status['content']
@@ -176,11 +188,19 @@ M.fetch_home_timeline = function()
       chunks = split_by_chunk(whole_message, width - 10)
       for i, chunk in ipairs(chunks) do
         table.insert(messages, chunk)
+        table.insert(metadata, {
+          line_number = line_number,
+          data = json,
+        })
         line_number = line_number + 1
       end
 
       message = '-----------------------'
       table.insert(messages, message)
+      table.insert(metadata, {
+        line_number = line_number,
+        data = json,
+      })
       line_number = line_number + 1
     end
   end
@@ -192,6 +212,12 @@ M.fetch_home_timeline = function()
 
   for _, line_number in ipairs(line_numbers) do
     vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
+  end
+
+  for _, metadata_for_line in ipairs(metadata) do
+    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
+      virt_text = {{metadata_for_line.data, "Whitespace"}},
+    })
   end
 end
 
@@ -206,6 +232,7 @@ M.reload_statuses = function()
 
     local namespaces = vim.api.nvim_get_namespaces()
     local mastodon_ns = namespaces['MastodonNS']
+    local metadata = {}
 
     messages = {}
     local line_number = 0
@@ -214,9 +241,20 @@ M.reload_statuses = function()
       local account = status['account']
       if account ~= nil then
         local message = "@" .. account['username']
+        local status_id = status['id']
+        local url = status['uri']
+        local json = vim.fn.json_encode({
+          status_id = status_id,
+          url = url,
+        })
+
         message = message .. "(" .. (account['display_name']) .. ")"
         table.insert(messages, message)
         table.insert(line_numbers, line_number)
+        table.insert(metadata, {
+          line_number = line_number,
+          data = json,
+        })
         line_number = line_number + 1
 
         local whole_message = status['content']
@@ -226,11 +264,19 @@ M.reload_statuses = function()
         chunks = split_by_chunk(whole_message, width - 10)
         for i, chunk in ipairs(chunks) do
           table.insert(messages, chunk)
+          table.insert(metadata, {
+            line_number = line_number,
+            data = json,
+          })
           line_number = line_number + 1
         end
 
         message = '-----------------------'
         table.insert(messages, message)
+        table.insert(metadata, {
+          line_number = line_number,
+          data = json,
+        })
         line_number = line_number + 1
       end
     end
@@ -242,6 +288,12 @@ M.reload_statuses = function()
 
     for _, line_number in ipairs(line_numbers) do
       vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
+    end
+
+    for _, metadata_for_line in ipairs(metadata) do
+      vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
+        virt_text = {{metadata_for_line.data, "Whitespace"}},
+      })
     end
   end
 end
