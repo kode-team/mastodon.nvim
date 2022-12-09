@@ -9,6 +9,10 @@ local function split_by_chunk(text, chunk_size)
     return s
 end
 
+local function is_reblog(status)
+  return status['reblog'] ~= vim.NIL
+end
+
 M.render_home_timeline = function(bufnr, win, statuses)
   local namespaces = vim.api.nvim_get_namespaces()
   local mastodon_ns = namespaces['MastodonNS']
@@ -20,47 +24,56 @@ M.render_home_timeline = function(bufnr, win, statuses)
   local line_numbers = {}
 
   for i, status in ipairs(statuses) do
+    local target_status = nil
+    local line = nil
     local account = status['account']
-    if account ~= nil then
-      local line = "@" .. account['username']
-      local status_id = status['id']
-      local url = status['uri']
-      local json = vim.fn.json_encode({
-        status_id = status_id,
-        url = url,
-      })
-
+    if is_reblog(status) then
+      target_status = status['reblog']
+      line = "@" .. target_status['account']['username']
+      line = line .. "(" .. target_status['account']['display_name']  .. ")"
+      line = line .. " --- boosted by @" .. account['username']
       line = line .. "(" .. (account['display_name']) .. ")"
-      table.insert(lines, line)
-      table.insert(line_numbers, line_number)
-      table.insert(metadata, {
-        line_number = line_number,
-        data = json,
-      })
-      line_number = line_number + 1
+    else
+      target_status = status
+      line = "@" .. account['username']
+      line = line .. "(" .. (account['display_name']) .. ")"
+    end
+    local status_id = status['id']
+    local url = status['uri']
+    local json = vim.fn.json_encode({
+      status_id = status_id,
+      url = url,
+    })
 
-      local whole_message = status['content']
-      local width = vim.api.nvim_win_get_width(win)
+    table.insert(lines, line)
+    table.insert(line_numbers, line_number)
+    table.insert(metadata, {
+      line_number = line_number,
+      data = json,
+    })
+    line_number = line_number + 1
 
-      -- (width - 10) interpolates sign column's length and line number column's length
-      local chunks = split_by_chunk(whole_message, width - 10)
-      for i, chunk in ipairs(chunks) do
-        table.insert(lines, chunk)
-        table.insert(metadata, {
-          line_number = line_number,
-          data = json,
-        })
-        line_number = line_number + 1
-      end
+    local whole_message = target_status['content']
+    local width = vim.api.nvim_win_get_width(win)
 
-      line = '-----------------------'
-      table.insert(lines, line)
+    -- (width - 10) interpolates sign column's length and line number column's length
+    local chunks = split_by_chunk(whole_message, width - 10)
+    for i, chunk in ipairs(chunks) do
+      table.insert(lines, chunk)
       table.insert(metadata, {
         line_number = line_number,
         data = json,
       })
       line_number = line_number + 1
     end
+
+    line = '-----------------------'
+    table.insert(lines, line)
+    table.insert(metadata, {
+      line_number = line_number,
+      data = json,
+    })
+    line_number = line_number + 1
   end
 
   vim.api.nvim_buf_set_name(bufnr, "Mastodon Home")
