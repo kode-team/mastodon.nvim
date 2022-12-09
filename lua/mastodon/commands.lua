@@ -19,38 +19,13 @@ M.greeting = function()
 end
 
 M.toot_message = function(message)
-  local cmd = "curl"
+  local content = api_client.post_message(message)
 
-  local active_account = db_client:get_active_account()[1]
-
-  local access_token = active_account.access_token
-  local instance_url = active_account.instance_url
-
-  cmd = cmd .. " " .. "'" .. instance_url .. "/api/v1/statuses'"
-  cmd = cmd .. " -s"
-  cmd = cmd .. " -X " .. "POST"
-  cmd = cmd .. " -H " .. "'Accept: application/json'"
-  cmd = cmd .. " -H " .. "'Content-Type: application/json'"
-  cmd = cmd .. " -H " .. "'Authorization: Bearer " .. access_token .. "'"
-
-  cmd = cmd .. " --data-raw " .. "$'{"
-  cmd = cmd .. "\"status\":" .. message
-  cmd = cmd .. ",\"in_reply_to_id\":null"
-  cmd = cmd .. ",\"media_ids\":[]"
-  cmd = cmd .. ",\"sensitive\":false"
-  cmd = cmd .. ",\"spoiler_text\":\"\""
-  cmd = cmd .. ",\"visibility\":\"unlisted\""
-  cmd = cmd .. ",\"poll\": null"
-  cmd = cmd .. ",\"language\":\"ko\""
-  cmd = cmd .. "}'"
-
-  local response = utils.execute_curl(cmd)
-  local message = utils.parse_json(response)["content"]
-  vim.notify(message, "info", {
+  vim.notify(content, "info", {
     title = "(Mastodon.nvim) 툿 게시 성공!"
   })
 
-  return response
+  return content
 end
 
 M.add_account = function()
