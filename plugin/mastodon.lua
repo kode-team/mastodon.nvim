@@ -4,3 +4,18 @@ vim.api.nvim_create_user_command("MastodonAddAccount", require("mastodon").add_a
 vim.api.nvim_create_user_command("MastodonSelectAccount", require("mastodon").select_account, {})
 vim.api.nvim_create_user_command("MastodonLoadHomeTimeline", require("mastodon").fetch_home_timeline, {})
 vim.api.nvim_create_user_command("MastodonReload", require("mastodon").reload_statuses, {})
+
+
+local map = vim.api.nvim_set_keymap
+local default_opts = { noremap = true, silent = true }
+
+local augroup = vim.api.nvim_create_augroup('user_cmds', {clear = true})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = {'mastodon'},
+  group = augroup,
+  desc = 'Only works on Mastodon Buffers',
+  callback = function(event)
+    map('n', ',mv', ":lua require('mastodon.actions').print_verbose_information()<CR>", default_opts)
+  end
+})
