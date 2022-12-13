@@ -4,6 +4,27 @@ local db_client = require("mastodon.db_client")
 
 local M = {}
 
+M.get_status = function(status_id)
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local url = instance_url .. "/api/v1/statuses/" .. status_id
+
+  local res = curl.get(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+
+  local status = vim.fn.json_decode(res.body)
+  return status
+end
+
 M.fetch_home_timeline = function()
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
