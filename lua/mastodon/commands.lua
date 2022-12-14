@@ -125,6 +125,18 @@ M.fetch_home_timeline = function()
   renderer.render_home_timeline(bufnr, win, statuses)
 end
 
+M.fetch_bookmarks = function()
+  vim.cmd('vsplit')
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_create_buf(true, true)
+  vim.api.nvim_win_set_buf(win, buf)
+
+  local statuses = api_client.fetch_bookmarks()
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  renderer.render_bookmarks(bufnr, win, statuses)
+end
+
 M.reload_statuses = function()
   local win = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -132,15 +144,21 @@ M.reload_statuses = function()
   local buf_name = vim.api.nvim_buf_get_name(bufnr)
   -- If we set buffer's name using nvim_set_buf_name, nvim_get_buf_name returns "$HOME/buf_name"
   if string.find(buf_name, "Mastodon Home") then
-
     local new_buf = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(win, new_buf)
     vim.api.nvim_buf_delete(bufnr, {})
     bufnr = new_buf
 
     local statuses = api_client.fetch_home_timeline()
-
     renderer.render_home_timeline(bufnr, win, statuses)
+  elseif string.find(buf_name, "Mastodon Bookmark") then
+    local new_buf = vim.api.nvim_create_buf(true, true)
+    vim.api.nvim_win_set_buf(win, new_buf)
+    vim.api.nvim_buf_delete(bufnr, {})
+    bufnr = new_buf
+
+    local statuses = api_client.fetch_bookmarks()
+    renderer.render_bookmarks(bufnr, win, statuses)
   end
 end
 

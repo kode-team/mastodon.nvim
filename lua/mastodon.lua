@@ -57,6 +57,10 @@ M.fetch_home_timeline = function()
   commands.fetch_home_timeline()
 end
 
+M.fetch_bookmarks = function()
+  commands.fetch_bookmarks()
+end
+
 M.reload_statuses = function()
   commands.reload_statuses()
 end

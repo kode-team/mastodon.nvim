@@ -46,6 +46,27 @@ M.fetch_home_timeline = function()
   return statuses
 end
 
+M.fetch_bookmarks = function()
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local url = instance_url .. "/api/v1/bookmarks"
+
+  local res = curl.get(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+
+  local statuses = vim.fn.json_decode(res.body)
+  return statuses
+end
+
 M.post_message = function(message)
   local active_account = db_client:get_active_account()[1]
 
