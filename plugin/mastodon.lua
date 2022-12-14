@@ -17,5 +17,6 @@ vim.api.nvim_create_autocmd('FileType', {
   desc = 'Only works on Mastodon Buffers',
   callback = function(event)
     map('n', ',mv', ":lua require('mastodon.actions').print_verbose_information()<CR>", default_opts)
+    map('n', ',mr', ":lua require('mastodon').reload_statuses()<CR>", default_opts)
   end
 })
