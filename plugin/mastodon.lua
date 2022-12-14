@@ -10,7 +10,7 @@ vim.api.nvim_create_user_command("MastodonReload", require("mastodon").reload_st
 local map = vim.api.nvim_set_keymap
 local default_opts = { noremap = true, silent = true }
 
-local augroup = vim.api.nvim_create_augroup('user_cmds', {clear = true})
+local augroup = vim.api.nvim_create_augroup('user_cmds', { clear = false })
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = {'mastodon'},
