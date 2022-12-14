@@ -21,3 +21,5 @@ vim.api.nvim_create_autocmd('FileType', {
     map('n', ',mr', ":lua require('mastodon').reload_statuses()<CR>", default_opts)
   end
 })
+
+map('n', ',mb', ":lua require('mastodon').fetch_bookmarks()<CR>", default_opts)
