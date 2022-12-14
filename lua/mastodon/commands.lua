@@ -26,6 +26,8 @@ M.toot_message = function(message)
     title = "(Mastodon.nvim) 툿 게시 성공!"
   })
 
+  M.reload_statuses()
+
   return content
 end
 
