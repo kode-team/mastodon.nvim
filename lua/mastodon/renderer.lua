@@ -13,10 +13,7 @@ local function is_reblog(status)
   return status['reblog'] ~= vim.NIL
 end
 
-M.render_home_timeline = function(bufnr, win, statuses)
-  local namespaces = vim.api.nvim_get_namespaces()
-  local mastodon_ns = namespaces['MastodonNS']
-
+local function prepare_statuses(statuses, width)
   local lines = {}
   local metadata = {}
 
@@ -54,7 +51,6 @@ M.render_home_timeline = function(bufnr, win, statuses)
     line_number = line_number + 1
 
     local whole_message = target_status['content']
-    local width = vim.api.nvim_win_get_width(win)
 
     -- (width - 10) interpolates sign column's length and line number column's length
     local chunks = split_by_chunk(whole_message, width - 10)
@@ -75,6 +71,23 @@ M.render_home_timeline = function(bufnr, win, statuses)
     })
     line_number = line_number + 1
   end
+
+  return {
+    line_numbers = line_numbers,
+    lines = lines,
+    metadata = metadata,
+  }
+end
+
+M.render_home_timeline = function(bufnr, win, statuses)
+  local namespaces = vim.api.nvim_get_namespaces()
+  local mastodon_ns = namespaces['MastodonNS']
+
+  local width = vim.api.nvim_win_get_width(win)
+  local result = prepare_statuses(statuses, width)
+  local lines = result.lines
+  local line_numbers = result.line_numbers
+  local metadata = result.metadata
 
   vim.api.nvim_buf_set_name(bufnr, "Mastodon Home")
   vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
