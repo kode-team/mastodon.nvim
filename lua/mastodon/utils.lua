@@ -51,19 +51,14 @@ M.utf8_substr = function(text, start, finish)
     if (c >= 0 and c <= 127) then
       i = i + 0
     elseif (bit.band(c, 0xE0) == 0xC0) then
-      print('unicode i + 1')
       i = i + 1
     elseif (bit.band(c, 0xF0) == 0xE0) then
-      print('unicode i + 2')
       i = i + 2
     elseif (bit.band(c, 0xF8) == 0xF0) then
-      print('unicode i + 3')
       i = i + 3
     elseif (bit.band(c, 0xFC) == 0xF8) then
-      print('unicode i + 4')
       i = i + 4
     elseif (bit.band(c, 0xFE) == 0xFC) then
-      print('unicode i + 5')
       i = i + 5
     else
       return ""
