@@ -1,10 +1,12 @@
+local utils = require("mastodon.utils")
 
 local M = {}
 
 local function split_by_chunk(text, chunk_size)
     local s = {}
     for i=1, #text, chunk_size do
-        s[#s+1] = text:sub(i, i + chunk_size - 1)
+        s[#s+1] = utils.utf8_substr(text, i, i + chunk_size - 1)
+        print(s[#s])
     end
     return s
 end
