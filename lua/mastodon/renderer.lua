@@ -21,6 +21,12 @@ local function prepare_statuses(statuses, width)
   local line_number = 0
   local line_numbers = {}
 
+  local reply_action_icon = '↩️'
+  local favourite_action_icon = '💗'
+  local boost_action_icon = '🚀'
+  local bookmark_action_icon = '🔖'
+  local check_icon = '✔️'
+
   for i, status in ipairs(statuses) do
     local target_status = nil
     local line = nil
@@ -63,6 +69,48 @@ local function prepare_statuses(statuses, width)
       })
       line_number = line_number + 1
     end
+
+    table.insert(lines, "")
+    table.insert(metadata, {
+      line_number = line_number,
+      data = json,
+    })
+    line_number = line_number + 1
+
+    local bookmarked = target_status['bookmarked']
+    local favourited = target_status['favourited']
+    local reblogged  = target_status['reblogged']
+
+    local reblogs_count = target_status['reblogs_count']
+    local favourites_count = target_status['favourites_count']
+    local replies_count = target_status['replies_count']
+
+    line = " " .. reply_action_icon
+    line = line .. "  " .. replies_count
+
+    line = line .. "   " .. boost_action_icon
+    line = line .. "  " .. reblogs_count
+    if reblogged then
+      line = line .. " (" .. check_icon .. ")"
+    end
+
+    line = line .. "   " .. favourite_action_icon
+    line = line .. "  " .. favourites_count
+    if favourited then
+      line = line .. " (" .. check_icon .. ")"
+    end
+
+    line = line .. "   " .. bookmark_action_icon
+    if bookmarked then
+      line = line .. " (" .. check_icon .. ")"
+    end
+
+    table.insert(lines, line)
+    table.insert(metadata, {
+      line_number = line_number,
+      data = json,
+    })
+    line_number = line_number + 1
 
     line = '-----------------------'
     table.insert(lines, line)

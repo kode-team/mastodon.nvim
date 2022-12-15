@@ -43,22 +43,23 @@ M.utf8_substr = function(text, start, finish)
       max = i
     end
 
-    if text:sub(i,i) == nil then
+    local char = text:sub(i,i)
+    if char == nil then
       break
     end
 
-    local c = text:sub(i,i):byte()
-    if (c >= 0 and c <= 127) then
+    local code = char:byte()
+    if (code >= 0 and code <= 127) then
       i = i + 0
-    elseif (bit.band(c, 0xE0) == 0xC0) then
+    elseif (bit.band(code, 0xE0) == 0xC0) then
       i = i + 1
-    elseif (bit.band(c, 0xF0) == 0xE0) then
+    elseif (bit.band(code, 0xF0) == 0xE0) then
       i = i + 2
-    elseif (bit.band(c, 0xF8) == 0xF0) then
+    elseif (bit.band(code, 0xF8) == 0xF0) then
       i = i + 3
-    elseif (bit.band(c, 0xFC) == 0xF8) then
+    elseif (bit.band(code, 0xFC) == 0xF8) then
       i = i + 4
-    elseif (bit.band(c, 0xFE) == 0xFC) then
+    elseif (bit.band(code, 0xFE) == 0xFC) then
       i = i + 5
     else
       return ""
