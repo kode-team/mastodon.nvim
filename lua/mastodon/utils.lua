@@ -77,4 +77,47 @@ M.utf8_substr = function(text, start, finish)
   return text:sub(min, max)
 end
 
+-- definition of Stack data structure
+local Stack = {}
+
+function Stack.new()
+  local o = setmetatable({}, Stack)
+  o.__index = o.self
+  o.items = {}
+  return o
+end
+
+
+Stack.__index = Stack
+
+function Stack:__tostring()
+  return string.format("Stack (with length %d)", #self.items)
+end
+
+function Stack:push(item)
+  table.insert(self.items, item)
+end
+
+function Stack:size()
+  return #self.items
+end
+
+function Stack:pop()
+  if #self.items == 0 then
+    return nil
+  end
+
+  return table.remove(self.items)
+end
+
+function Stack:top()
+  if #self.items == 0 then
+    return nil
+  end
+
+  return self.items[#self.items]
+end
+
+M.Stack = Stack
+
 return M
