@@ -13,11 +13,13 @@ describe("Parser", function()
       assert(parse_tree2.tag == "html")
 
       assert(parse_tree1.children[1].tag == 'p')
-      assert(parse_tree1.children[2].text == 'aaaaa')
-      assert(parse_tree1.children[3].tag == 'b')
+      assert(parse_tree1.children[2].tag == '/p')
+      assert(parse_tree1.children[3].text == 'aaaaa')
+      assert(parse_tree1.children[4].tag == 'b')
 
       assert(parse_tree2.children[1].tag == 'p')
-      assert(parse_tree2.children[2].tag == 'br/')
+      assert(parse_tree2.children[2].tag == '/p')
+      assert(parse_tree2.children[3].tag == 'br/')
     end)
   end)
 

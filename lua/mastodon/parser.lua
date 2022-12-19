@@ -83,7 +83,9 @@ function Parser:add_tag(text)
     end
     local node = self.unfinished:pop()
     local parent = self.unfinished:top()
+    local closing_node = ElementNode:new("/" .. node.tag, {}, parent)
     table.insert(parent.children, node)
+    table.insert(parent.children, closing_node)
   elseif contains(SELF_CLOSING_TAGS, tag) then
     local parent = self.unfinished:top()
     local node = ElementNode:new(tag, attributes, parent)
