@@ -1,4 +1,5 @@
 local utils = require("mastodon.utils")
+local Parser = require("mastodon.parser")
 
 local M = {}
 
@@ -12,6 +13,69 @@ end
 
 local function is_reblog(status)
   return status['reblog'] ~= vim.NIL
+end
+
+local function flatten_nodes(list, node)
+  table.insert(list, node)
+  if node.children ~= nil then
+    for _, child in ipairs(node.children) do
+      flatten_nodes(list, child)
+    end
+  end
+end
+
+local function render_lines(nodes)
+  local line = ""
+  local list_depth = 0
+  local lines = {}
+  for _, node in ipairs(nodes) do
+    local tag = node.tag
+    local text = node.text
+
+    if tag ~= nil then
+      if tag:sub(1,1) ~= '/' then
+        if tag == 'p' then
+          if #line ~= 0 then
+            table.insert(lines, line)
+            line = ""
+          end
+        elseif tag == 'blockquote' then
+          if #line ~= 0 then
+            table.insert(lines, line)
+            line = ""
+          end
+        elseif tag == 'br' or tag == 'br/' or tag == 'br /' then
+          table.insert(lines, line)
+          line = ""
+        elseif tag == 'ul' or tag == 'ol' then
+          list_depth = list_depth + 1
+          if #line ~= 0 then
+            table.insert(lines, line)
+            line = ""
+          end
+        end
+      else
+        if tag:sub(1,3) == "/li" then
+          table.insert(lines, string.rep(" ", list_depth) .. "*" .. line)
+          line = ""
+        elseif tag:sub(1,11) == '/blockquote' then
+          table.insert(lines, line)
+          line = ""
+        elseif tag:sub(1,2) == "/p" then
+          table.insert(lines, line)
+          line = ""
+        end
+      end
+    else
+      line = line .. text
+    end
+  end
+
+  if #line ~= 0 then
+    table.insert(lines, line)
+  end
+
+  return lines
 end
 
 local function prepare_statuses(statuses, width)
@@ -59,15 +123,24 @@ local function prepare_statuses(statuses, width)
 
     local whole_message = target_status['content']
 
+    local parser = Parser:new(whole_message)
+    local root_node = parser:parse()
+    local nodes = {}
+    flatten_nodes(nodes, root_node)
+
+    local rendered_lines = render_lines(nodes)
+
     -- (width - 10) interpolates sign column's length and line number column's length
-    local chunks = split_by_chunk(whole_message, width - 10)
-    for i, chunk in ipairs(chunks) do
-      table.insert(lines, chunk)
-      table.insert(metadata, {
-        line_number = line_number,
-        data = json,
-      })
-      line_number = line_number + 1
+    for _, rendered_line in ipairs(rendered_lines) do
+      local chunks = split_by_chunk(rendered_line, width - 10)
+      for i, chunk in ipairs(chunks) do
+        table.insert(lines, chunk)
+        table.insert(metadata, {
+          line_number = line_number,
+          data = json,
+        })
+        line_number = line_number + 1
+      end
     end
 
     table.insert(lines, "")
@@ -179,5 +252,8 @@ M.render_bookmarks = function(bufnr, win, statuses)
     })
   end
 end
+
+M.flatten_nodes = flatten_nodes
+M.render_lines = render_lines
 
 return M
