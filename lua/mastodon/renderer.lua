@@ -85,7 +85,7 @@ local function prepare_statuses(statuses, width)
   local line_number = 0
   local line_numbers = {}
 
-  local reply_action_icon = '↩️'
+  local reply_action_icon = '💬'
   local favourite_action_icon = '💗'
   local boost_action_icon = '🚀'
   local bookmark_action_icon = '🔖'
