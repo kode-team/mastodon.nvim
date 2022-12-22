@@ -15,10 +15,6 @@ vim.notify.setup({
 
 local utils = require('mastodon.utils')
 
-M.greeting = function()
-  return "hello world!"
-end
-
 M.toot_message = function(message)
   local content = api_client.post_message(message)
 

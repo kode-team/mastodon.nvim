@@ -21,16 +21,6 @@ M.setup = function(args)
   })
 end
 
--- "greeting" is a public method for the plugin
-M.greeting = function()
-  print(commands.greeting())
-  print(commands.greeting())
-  print(commands.greeting())
-  print(commands.greeting())
-  print(commands.greeting())
-  print(commands.greeting())
-end
-
 M.toot_message = function(opts)
   local message = opts.args
   commands.toot_message(message)
