@@ -1,4 +1,5 @@
 local api_client = require('mastodon.api_client')
+local commands = require('mastodon.commands')
 
 local M = {}
 
@@ -24,6 +25,19 @@ M.print_verbose_information = function()
   local status_id = get_status_id()
   local status = api_client.get_status(status_id)
   print(vim.fn.json_encode(status))
+end
+
+M.toggle_bookmark = function()
+  local status_id = get_status_id()
+  local status = api_client.get_status(status_id)
+
+  if status['bookmarked'] then
+    api_client.cancel_bookmark(status_id)
+    commands.reload_statuses()
+  else
+    api_client.add_bookmark(status_id)
+    commands.reload_statuses()
+  end
 end
 
 return M

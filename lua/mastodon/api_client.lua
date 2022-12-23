@@ -67,6 +67,56 @@ M.fetch_bookmarks = function()
   return statuses
 end
 
+M.add_bookmark = function(status_id)
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local url = instance_url .. "/api/v1/statuses/" .. status_id .. "/bookmark"
+
+  local res = curl.post(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+
+  vim.notify("Added to bookmarks", "info", {
+    title = "Mastodon.nvim"
+  })
+
+  local status = vim.fn.json_decode(res.body)
+  return status
+end
+
+M.cancel_bookmark = function(status_id)
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local url = instance_url .. "/api/v1/statuses/" .. status_id .. "/unbookmark"
+
+  local res = curl.post(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+
+  vim.notify("Removed from bookmarks", "info", {
+    title = "Mastodon.nvim"
+  })
+
+  local status = vim.fn.json_decode(res.body)
+  return status
+end
+
 M.post_message = function(message)
   local active_account = db_client:get_active_account()[1]
 
