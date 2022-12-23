@@ -40,4 +40,18 @@ M.toggle_bookmark = function()
   end
 end
 
+M.toggle_favourite = function()
+  local status_id = get_status_id()
+
+  local status = api_client.get_status(status_id)
+
+  if status['favourited'] then
+    api_client.cancel_favourite(status_id)
+    commands.reload_statuses()
+  else
+    api_client.add_favourite(status_id)
+    commands.reload_statuses()
+  end
+end
+
 return M
