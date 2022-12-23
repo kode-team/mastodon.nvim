@@ -2,7 +2,7 @@ local api_client = require('mastodon.api_client')
 
 local M = {}
 
-M.print_verbose_information = function()
+local function get_status_id()
   local position = vim.api.nvim_win_get_cursor(0)
   local namespaces = vim.api.nvim_get_namespaces()
   local mastodon_ns = namespaces['MastodonNS']
@@ -17,7 +17,11 @@ M.print_verbose_information = function()
   local virt_text = details['virt_text'][1]
   local metadata = virt_text[1]
 
-  local status_id = vim.fn.json_decode(metadata)['status_id']
+  return vim.fn.json_decode(metadata)['status_id']
+end
+
+M.print_verbose_information = function()
+  local status_id = get_status_id()
   local status = api_client.get_status(status_id)
   print(vim.fn.json_encode(status))
 end
