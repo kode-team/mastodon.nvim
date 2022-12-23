@@ -110,44 +110,75 @@ end
 
 
 M.fetch_home_timeline = function()
-  local active_accounts = db_client:get_active_account()
+  local statuses = api_client.fetch_home_timeline()
+  local bufnr = 0
+  local buf = nil
+  local target_buf_name = "Mastodon Home"
+  local target_buffer = utils.find_buffer_by_name(target_buf_name)
+  if target_buffer ~= -1 then
+    buf = target_buffer
+    vim.api.nvim_buf_delete(buf, {})
 
-  vim.cmd('vsplit')
+    buf = vim.api.nvim_create_buf(true, true)
+  else
+    vim.cmd('vsplit')
+    buf = vim.api.nvim_create_buf(true, true)
+  end
+
   local win = vim.api.nvim_get_current_win()
-  local buf = vim.api.nvim_create_buf(true, true)
   vim.api.nvim_win_set_buf(win, buf)
 
-  local statuses = api_client.fetch_home_timeline()
-  local bufnr = vim.api.nvim_get_current_buf()
-
+  bufnr = vim.api.nvim_get_current_buf()
   renderer.render_home_timeline(bufnr, win, statuses)
 
   vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_bookmarks = function()
-  vim.cmd('vsplit')
+  local statuses = api_client.fetch_bookmarks()
+  local bufnr = 0
+  local buf = nil
+  local target_buf_name = "Mastodon Bookmark"
+  local target_buffer = utils.find_buffer_by_name(target_buf_name)
+  if target_buffer ~= -1 then
+    buf = target_buffer
+    vim.api.nvim_buf_delete(buf, {})
+
+    buf = vim.api.nvim_create_buf(true, true)
+  else
+    vim.cmd('vsplit')
+    buf = vim.api.nvim_create_buf(true, true)
+  end
+
   local win = vim.api.nvim_get_current_win()
-  local buf = vim.api.nvim_create_buf(true, true)
   vim.api.nvim_win_set_buf(win, buf)
 
-  local statuses = api_client.fetch_bookmarks()
-  local bufnr = vim.api.nvim_get_current_buf()
-
+  bufnr = vim.api.nvim_get_current_buf()
   renderer.render_bookmarks(bufnr, win, statuses)
 
   vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_favourites = function()
-  vim.cmd('vsplit')
+  local statuses = api_client.fetch_favourites()
+  local bufnr = 0
+  local buf = nil
+  local target_buf_name = "Mastodon Favourites"
+  local target_buffer = utils.find_buffer_by_name(target_buf_name)
+  if target_buffer ~= -1 then
+    buf = target_buffer
+    vim.api.nvim_buf_delete(buf, {})
+
+    buf = vim.api.nvim_create_buf(true, true)
+  else
+    vim.cmd('vsplit')
+    buf = vim.api.nvim_create_buf(true, true)
+  end
+
   local win = vim.api.nvim_get_current_win()
-  local buf = vim.api.nvim_create_buf(true, true)
   vim.api.nvim_win_set_buf(win, buf)
 
-  local statuses = api_client.fetch_favourites()
-  local bufnr = vim.api.nvim_get_current_buf()
-
+  bufnr = vim.api.nvim_get_current_buf()
   renderer.render_favourites(bufnr, win, statuses)
 
   vim.api.nvim_win_set_cursor(0, {1, 0})
