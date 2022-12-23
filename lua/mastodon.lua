@@ -51,6 +51,10 @@ M.fetch_bookmarks = function()
   commands.fetch_bookmarks()
 end
 
+M.fetch_favourites = function()
+  commands.fetch_favourites()
+end
+
 M.reload_statuses = function()
   commands.reload_statuses()
 end

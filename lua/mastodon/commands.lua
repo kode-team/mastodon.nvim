@@ -139,6 +139,20 @@ M.fetch_bookmarks = function()
   vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
+M.fetch_favourites = function()
+  vim.cmd('vsplit')
+  local win = vim.api.nvim_get_current_win()
+  local buf = vim.api.nvim_create_buf(true, true)
+  vim.api.nvim_win_set_buf(win, buf)
+
+  local statuses = api_client.fetch_favourites()
+  local bufnr = vim.api.nvim_get_current_buf()
+
+  renderer.render_favourites(bufnr, win, statuses)
+
+  vim.api.nvim_win_set_cursor(0, {1, 0})
+end
+
 M.reload_statuses = function()
   local win = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -163,6 +177,16 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_bookmarks()
     renderer.render_bookmarks(bufnr, win, statuses)
+
+    vim.api.nvim_win_set_cursor(0, {1, 0})
+  elseif string.find(buf_name, "Mastodon Favourites") then
+    local new_buf = vim.api.nvim_create_buf(true, true)
+    vim.api.nvim_win_set_buf(win, new_buf)
+    vim.api.nvim_buf_delete(bufnr, {})
+    bufnr = new_buf
+
+    local statuses = api_client.fetch_favourites()
+    renderer.render_favourites(bufnr, win, statuses)
 
     vim.api.nvim_win_set_cursor(0, {1, 0})
   end

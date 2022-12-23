@@ -3,6 +3,7 @@ vim.api.nvim_create_user_command("MastodonAddAccount", require("mastodon").add_a
 vim.api.nvim_create_user_command("MastodonSelectAccount", require("mastodon").select_account, {})
 vim.api.nvim_create_user_command("MastodonLoadHomeTimeline", require("mastodon").fetch_home_timeline, {})
 vim.api.nvim_create_user_command("MastodonLoadBookmarks", require("mastodon").fetch_bookmarks, {})
+vim.api.nvim_create_user_command("MastodonLoadFavourites", require("mastodon").fetch_favourites, {})
 vim.api.nvim_create_user_command("MastodonReload", require("mastodon").reload_statuses, {})
 
 
