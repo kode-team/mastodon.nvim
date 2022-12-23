@@ -77,6 +77,16 @@ M.utf8_substr = function(text, start, finish)
   return text:sub(min, max)
 end
 
+M.find_buffer_by_name = function(name)
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    local buf_name = vim.api.nvim_buf_get_name(buf)
+    if string.find(buf_name, name) then
+      return buf
+    end
+  end
+  return -1
+end
+
 -- definition of Stack data structure
 local Stack = {}
 
