@@ -21,6 +21,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
     map('n', ',tb', ":lua require('mastodon.actions').toggle_bookmark()<CR>", default_opts)
     map('n', ',tf', ":lua require('mastodon.actions').toggle_favourite()<CR>", default_opts)
+    map('n', ',tB', ":lua require('mastodon.actions').toggle_boost()<CR>", default_opts)
   end
 })
 

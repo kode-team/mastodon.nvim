@@ -54,4 +54,18 @@ M.toggle_favourite = function()
   end
 end
 
+M.toggle_boost = function()
+  local status_id = get_status_id()
+
+  local status = api_client.get_status(status_id)
+
+  if status['reblogged'] then
+    api_client.cancel_boost(status_id)
+    commands.reload_statuses()
+  else
+    api_client.boost(status_id)
+    commands.reload_statuses()
+  end
+end
+
 return M
