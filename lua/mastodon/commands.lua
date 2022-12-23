@@ -121,6 +121,8 @@ M.fetch_home_timeline = function()
   local bufnr = vim.api.nvim_get_current_buf()
 
   renderer.render_home_timeline(bufnr, win, statuses)
+
+  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_bookmarks = function()
@@ -133,6 +135,8 @@ M.fetch_bookmarks = function()
   local bufnr = vim.api.nvim_get_current_buf()
 
   renderer.render_bookmarks(bufnr, win, statuses)
+
+  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.reload_statuses = function()
@@ -149,6 +153,8 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_home_timeline()
     renderer.render_home_timeline(bufnr, win, statuses)
+
+    vim.api.nvim_win_set_cursor(0, {1, 0})
   elseif string.find(buf_name, "Mastodon Bookmark") then
     local new_buf = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(win, new_buf)
@@ -157,6 +163,8 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_bookmarks()
     renderer.render_bookmarks(bufnr, win, statuses)
+
+    vim.api.nvim_win_set_cursor(0, {1, 0})
   end
 end
 
