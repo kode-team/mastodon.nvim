@@ -184,6 +184,31 @@ M.fetch_favourites = function()
   vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
+M.fetch_replies = function()
+  local statuses = api_client.fetch_replies()
+  local bufnr = 0
+  local buf = nil
+  local target_buf_name = "Mastodon Replies"
+  local target_buffer = utils.find_buffer_by_name(target_buf_name)
+  if target_buffer ~= -1 then
+    buf = target_buffer
+    vim.api.nvim_buf_delete(buf, {})
+
+    buf = vim.api.nvim_create_buf(true, true)
+  else
+    vim.cmd('vsplit')
+    buf = vim.api.nvim_create_buf(true, true)
+  end
+
+  local win = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_buf(win, buf)
+
+  bufnr = vim.api.nvim_get_current_buf()
+  renderer.render_replies(bufnr, win, statuses)
+
+  vim.api.nvim_win_set_cursor(0, {1, 0})
+end
+
 M.reload_statuses = function()
   local win = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -217,6 +242,16 @@ M.reload_statuses = function()
     bufnr = new_buf
 
     local statuses = api_client.fetch_favourites()
+    renderer.render_favourites(bufnr, win, statuses)
+
+    vim.api.nvim_win_set_cursor(0, {1, 0})
+  elseif string.find(buf_name, "Mastodon Replies") then
+    local new_buf = vim.api.nvim_create_buf(true, true)
+    vim.api.nvim_win_set_buf(win, new_buf)
+    vim.api.nvim_buf_delete(bufnr, {})
+    bufnr = new_buf
+
+    local statuses = api_client.fetch_replies()
     renderer.render_favourites(bufnr, win, statuses)
 
     vim.api.nvim_win_set_cursor(0, {1, 0})

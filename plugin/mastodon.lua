@@ -4,6 +4,7 @@ vim.api.nvim_create_user_command("MastodonSelectAccount", require("mastodon").se
 vim.api.nvim_create_user_command("MastodonLoadHomeTimeline", require("mastodon").fetch_home_timeline, {})
 vim.api.nvim_create_user_command("MastodonLoadBookmarks", require("mastodon").fetch_bookmarks, {})
 vim.api.nvim_create_user_command("MastodonLoadFavourites", require("mastodon").fetch_favourites, {})
+vim.api.nvim_create_user_command("MastodonLoadReplies", require("mastodon").fetch_replies, {})
 vim.api.nvim_create_user_command("MastodonReload", require("mastodon").reload_statuses, {})
 
 
@@ -27,6 +28,7 @@ vim.api.nvim_create_autocmd('FileType', {
   end
 })
 
+map('n', ',mR', ":lua require('mastodon').fetch_replies()<CR>", default_opts)
 map('n', ',mf', ":lua require('mastodon').fetch_favourites()<CR>", default_opts)
 map('n', ',mb', ":lua require('mastodon').fetch_bookmarks()<CR>", default_opts)
 map('n', ',mh', ":lua require('mastodon').fetch_home_timeline()<CR>", default_opts)

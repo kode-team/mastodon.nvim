@@ -88,6 +88,38 @@ M.fetch_favourites = function()
   return statuses
 end
 
+M.fetch_replies = function()
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+
+  local access_token = active_account.access_token
+  local instance_url = active_account.instance_url
+
+  local url = instance_url .. "/api/v1/notifications"
+
+  local res = curl.get(url, {
+    query = {
+      types = "mention",
+    },
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+
+  local notifications = vim.fn.json_decode(res.body)
+  local statuses = {}
+
+  for _, notification in ipairs(notifications) do
+    if notification['type'] == 'mention' then
+      table.insert(statuses, notification['status'])
+    end
+  end
+
+  return statuses
+end
+
 M.add_bookmark = function(status_id)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]

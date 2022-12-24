@@ -55,6 +55,10 @@ M.fetch_favourites = function()
   commands.fetch_favourites()
 end
 
+M.fetch_replies = function()
+  commands.fetch_replies()
+end
+
 M.reload_statuses = function()
   commands.reload_statuses()
 end
