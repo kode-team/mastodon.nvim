@@ -121,6 +121,34 @@ local function prepare_statuses(statuses, width)
     })
     line_number = line_number + 1
 
+    local mentions = status["mentions"]
+    local displayed_mentions = ""
+    for _, mention in ipairs(mentions) do
+      displayed_mentions = displayed_mentions .. " @" .. mention['acct']
+    end
+
+    if #mentions == 0 then
+      displayed_mentions = " self"
+    end
+
+    if status['in_reply_to_id'] ~= vim.NIL then
+      table.insert(lines, "(Replying to:" .. displayed_mentions .. ")")
+      table.insert(metadata, {
+        line_number = line_number,
+        data = json,
+      })
+      line_number = line_number + 1
+    end
+
+
+    table.insert(lines, "")
+    table.insert(line_numbers, line_number)
+    table.insert(metadata, {
+      line_number = line_number,
+      data = json,
+    })
+    line_number = line_number + 1
+
     local whole_message = target_status['content']
 
     local parser = Parser:new(whole_message)
