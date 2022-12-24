@@ -1,4 +1,5 @@
 local api_client = require('mastodon.api_client')
+local db_client = require('mastodon.db_client')
 local commands = require('mastodon.commands')
 
 local M = {}
@@ -52,6 +53,53 @@ M.toggle_favourite = function()
     api_client.add_favourite(status_id)
     commands.reload_statuses()
   end
+end
+
+M.reply = function()
+  local active_account = db_client:get_active_account()[1]
+  local status_id = get_status_id()
+
+  local status = api_client.get_status(status_id)
+
+  local mention_targets = {}
+
+  table.insert(mention_targets, status['account']['acct'])
+  local mentions = status['mentions']
+  for _, mention in ipairs(mentions) do
+    table.insert(mention_targets, mention['acct'])
+  end
+
+  local actual_mention_targets = {}
+  for _, mention in ipairs(mention_targets) do
+    if not string.find(active_account.username, mention) then
+      table.insert(actual_mention_targets, mention)
+    end
+  end
+
+  local message = ""
+  for _, acct in ipairs(actual_mention_targets) do
+    message = message .. "@" .. acct .. " "
+  end
+
+  local displayed_mentions = ""
+  if #actual_mention_targets == 0 then
+    displayed_mentions = "self"
+  else
+    displayed_mentions = message
+  end
+
+  local prompt_message = "(mentioning to: " .. displayed_mentions .. ")\n" .. "Enter your message: "
+
+  local message_body = vim.fn.input({ prompt = prompt_message })
+  message = message .. message_body
+
+  local content = api_client.reply(status_id, message)
+
+  vim.notify(content, "info", {
+    title = "(Mastodon.nvim) Replied to " .. displayed_mentions
+  })
+
+  commands.reload_statuses()
 end
 
 M.toggle_boost = function()
