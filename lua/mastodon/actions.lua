@@ -78,25 +78,25 @@ M.reply = function()
 
   local message = ""
   for _, acct in ipairs(actual_mention_targets) do
-    message = message .. "@" .. acct .. " "
+    message = message .. " @" .. acct
   end
 
   local displayed_mentions = ""
   if #actual_mention_targets == 0 then
-    displayed_mentions = "self"
+    displayed_mentions = " self"
   else
     displayed_mentions = message
   end
 
-  local prompt_message = "(mentioning to: " .. displayed_mentions .. ")\n" .. "Enter your message: "
+  local prompt_message = "(mentioning to:" .. displayed_mentions .. ")\n" .. "Enter your message: "
 
   local message_body = vim.fn.input({ prompt = prompt_message })
-  message = message .. message_body
+  message = message .. " " .. message_body
 
   local content = api_client.reply(status_id, message)
 
   vim.notify(content, "info", {
-    title = "(Mastodon.nvim) Replied to " .. displayed_mentions
+    title = "(Mastodon.nvim) Replied to" .. displayed_mentions
   })
 
   commands.reload_statuses()
