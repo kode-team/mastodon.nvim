@@ -103,7 +103,7 @@ local function prepare_statuses(statuses, width)
       line = line .. "(" .. (account['display_name']) .. ")"
     else
       target_status = status
-      line = "@" .. account['username']
+      line = "@" .. account['acct']
       line = line .. "(" .. (account['display_name']) .. ")"
     end
     local status_id = status['id']
