@@ -174,6 +174,25 @@ local function prepare_statuses(statuses, width)
     })
     line_number = line_number + 1
 
+    local media_attachments = status["media_attachments"]
+      if #media_attachments ~= 0 then
+      for j, attachment in ipairs(media_attachments) do
+        table.insert(lines, "Attachment " .. j .. ") " .. attachment['url'])
+        table.insert(metadata, {
+          line_number = line_number,
+          data = json,
+        })
+        line_number = line_number + 1
+      end
+
+      table.insert(lines, "")
+      table.insert(metadata, {
+        line_number = line_number,
+        data = json,
+      })
+      line_number = line_number + 1
+    end
+
     local bookmarked = target_status['bookmarked']
     local favourited = target_status['favourited']
     local reblogged  = target_status['reblogged']
