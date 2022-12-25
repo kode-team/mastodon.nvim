@@ -15,7 +15,8 @@ vim.notify.setup({
 
 local utils = require('mastodon.utils')
 
-M.toot_message = function(message)
+M.toot_message = function()
+  local message = vim.fn.input({prompt = "Enter your message: " })
   local content = api_client.post_message(message)
 
   vim.notify(content, "info", {

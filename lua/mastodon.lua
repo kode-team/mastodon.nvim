@@ -21,9 +21,8 @@ M.setup = function(args)
   })
 end
 
-M.toot_message = function(opts)
-  local message = opts.args
-  commands.toot_message(message)
+M.toot_message = function()
+  commands.toot_message()
 end
 
 M.add_account = function()
