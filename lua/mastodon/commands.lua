@@ -16,7 +16,10 @@ vim.notify.setup({
 local utils = require('mastodon.utils')
 
 M.toot_message = function()
-  local message = vim.fn.input({prompt = "Enter your message: " })
+  local active_accounts = db_client:get_active_account()
+  local active_account = active_accounts[1]
+  local prompt_message = "-- Your current account is " .. active_account.username ..  " --" ..  "\nEnter your message: "
+  local message = vim.fn.input({prompt = prompt_message })
   local content = api_client.post_message(message)
 
   vim.notify(content, "info", {
