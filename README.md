@@ -30,6 +30,7 @@ mastodon.nvim is Mastodon Client for Neovim.
 
 ## Requirements
 
+* Neovim >= 0.8
 * Neovim plugin
   * nvim-lua/plenary.nvim
   * rcarriga/nvim-notify
