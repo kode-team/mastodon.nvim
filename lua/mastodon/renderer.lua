@@ -158,17 +158,13 @@ local function prepare_statuses(statuses, width)
 
     local rendered_lines = render_lines(nodes)
 
-    -- (width - 10) interpolates sign column's length and line number column's length
     for _, rendered_line in ipairs(rendered_lines) do
-      local chunks = split_by_chunk(rendered_line, width - 10)
-      for i, chunk in ipairs(chunks) do
-        table.insert(lines, chunk)
-        table.insert(metadata, {
-          line_number = line_number,
-          data = json,
-        })
-        line_number = line_number + 1
-      end
+      table.insert(lines, rendered_line)
+      table.insert(metadata, {
+        line_number = line_number,
+        data = json,
+      })
+      line_number = line_number + 1
     end
 
     table.insert(lines, "")
