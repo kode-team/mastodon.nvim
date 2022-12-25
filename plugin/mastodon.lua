@@ -32,6 +32,7 @@ vim.api.nvim_create_autocmd('FileType', {
   end
 })
 
+map('n', ',mw', ":lua require('mastodon').toot_message()<CR>", default_opts)
 map('n', ',mR', ":lua require('mastodon').fetch_replies()<CR>", default_opts)
 map('n', ',mf', ":lua require('mastodon').fetch_favourites()<CR>", default_opts)
 map('n', ',mb', ":lua require('mastodon').fetch_bookmarks()<CR>", default_opts)
