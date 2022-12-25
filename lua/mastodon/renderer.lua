@@ -174,7 +174,7 @@ local function prepare_statuses(statuses, width)
     })
     line_number = line_number + 1
 
-    local media_attachments = status["media_attachments"]
+    local media_attachments = target_status["media_attachments"]
       if #media_attachments ~= 0 then
       for j, attachment in ipairs(media_attachments) do
         table.insert(lines, "Attachment " .. j .. ") " .. attachment['url'])
