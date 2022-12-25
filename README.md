@@ -59,7 +59,41 @@ use {
 
 ### (Important) Adding mastodon account
 
-Before using this plugin, you need to add your mastodon account using `MastodonAddAccount` command. With this command, you can
+Before using this plugin, you need to add your mastodon account using `MastodonAddAccount` command. With this command, you can switch to the account using `MastodonSelectAccount`
+
+For the detail, follow the guide below:
+
+<details>
+  <summary>(Click me)</summary>
+
+1) Go to `/settings/applications`, and Click `New Application` button
+
+![adding-account-browser-step-1](assets/adding-account-browser-1.png)
+
+2) Fill in the form freely and Check proper permissions as below
+
+![adding-account-browser-step-2](assets/adding-account-browser-2.png)
+
+
+3) After creating new application, Copy the `ACCESS TOKEN`
+
+![adding-account-browser-step-3](assets/adding-account-browser-3.png)
+
+4) Go back to the neovim, and Enter `:MastodonAddAccount`
+
+![adding-account-cmd-step-1](assets/adding-account-cmd-1.png)
+
+5) Enter your mastodon instance's url
+
+![adding-account-cmd-step-2](assets/adding-account-cmd-2.png)
+
+6) Enter your access token
+
+![adding-account-cmd-step-3](assets/adding-account-cmd-3.png)
+
+7) After adding account, make sure that your mastodon account is available. Switch to your account using `:MastodonSelectAccount` command, and Watch your home timeline using `:MastodonLoadHomeTimeline` command. That's all!
+
+</details>
 
 
 ### Loading Timeline
@@ -68,7 +102,7 @@ With `MastodonLoadHomeTimeline` command, you can see your account's home timelin
 
 ### Switching to another account
 
-If you want to switch to another account, you can use `MastodonSelectAccount` command
+If you want to switch to another account, you can use `MastodonSelectAccount` command.
 
 
 ## Keymap
