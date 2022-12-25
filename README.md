@@ -8,8 +8,10 @@ mastodon.nvim is Mastodon Client for Neovim.
 
 ## Requirements
 
-* plenary.nvim
-* nvim-notify
+* Neovim plugin
+  * nvim-lua/plenary.nvim
+  * rcarriga/nvim-notify
+  * kkharji/sqlite.lua
 
 ## Installation
 
@@ -21,6 +23,7 @@ use {
   requires = {
     "nvim-lua/plenary.nvim",
     "rcarriga/nvim-notify",
+    "kkharji/sqlite.lua",
   },
   config = function()
     require("mastodon").setup()
