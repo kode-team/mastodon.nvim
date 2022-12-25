@@ -6,6 +6,28 @@
 
 mastodon.nvim is Mastodon Client for Neovim.
 
+## Demo
+
+* Loading bookmarks
+
+![Loading bookmarks](assets/keymap-for-load-bookmark.gif)
+
+* Adding bookmark
+
+![Adding bookmark](assets/keymap-for-add-bookmark.gif)
+
+* Reloading statuses
+
+![Reloading statuses](assets/keymap-for-reload-status.gif)
+
+* Replying to status
+
+![Replying to status](assets/keymap-for-reply.gif)
+
+* Switching account
+
+![Selecting Account](assets/keymap-for-select-account.gif)
+
 ## Requirements
 
 * Neovim plugin
@@ -50,7 +72,34 @@ If you want to switch to another account, you can use `MastodonSelectAccount` co
 
 ## Keymap
 
-(WIP)
+### Buffer-wide / System-wide keymap
+
+> **Buffer-wide or system-wide keymap starts with `,m`**
+
+For buffer-wide keymap, you can call those keymap within only `Mastodon Buffer`:
+
+* `,mr` - Refreshes current `Mastodon Buffer`
+
+For system-wide keymap, you can call those keymap in anywhere:
+
+* `,mw` - alias for `MastodonTootMessage` command
+* `,ms` - alias for `MastodonSelectAccount` command
+* `,mh` - alias for `MastodonLoadHomeTimeline` command
+* `,mf` - alias for `MastodonLoadFavourites` command
+* `,mb` - alias for `MastodonLoadBookmarks` command
+
+
+### Status-wide keymap
+
+> **Status-wide keymap starts with `,t`**
+
+Within `Mastodon Buffer`, each line has metadata which includes status's id and url. Through those status-wide keymap, the keymap takes status's id from current line's metadata, and fetches status, and enable you take action:
+
+* `,tr` - Enables you to reply current status
+* `,tb` - Enables you to add current status to bookmarks
+* `,tf` - Enables you to add current status to favourites
+* `,tB` - Enables you to boost current status
+* `,tv` - Enables you to see current status's raw data
 
 # Explanation for developers
 
@@ -74,6 +123,8 @@ If you want to switch to another account, you can use `MastodonSelectAccount` co
 ```
 
 ## Testing
+
+Just run commands as below:
 
 ```sh
 $ make
