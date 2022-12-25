@@ -4,6 +4,32 @@ local db_client = require("mastodon.db_client")
 
 local M = {}
 
+M.verify_credentials_for_app = function(instance_url, access_token)
+  local url = instance_url .. "/api/v1/apps/verify_credentials"
+  local res = curl.get(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+  local result = vim.fn.json_decode(res.body)
+  return result
+end
+
+M.verify_credentials_for_account = function(instance_url, access_token)
+  local url = instance_url .. "/api/v1/accounts/verify_credentials"
+  local res = curl.get(url, {
+    headers = {
+      accept = "application/json",
+      content_type = "application/json",
+      authorization = "Bearer " .. access_token,
+    }
+  })
+  local result = vim.fn.json_decode(res.body)
+  return result
+end
+
 M.get_status = function(status_id)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
