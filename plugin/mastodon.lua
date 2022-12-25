@@ -18,13 +18,17 @@ vim.api.nvim_create_autocmd('FileType', {
   group = augroup,
   desc = 'Only works on Mastodon Buffers',
   callback = function(event)
-    map('n', ',mv', ":lua require('mastodon.actions').print_verbose_information()<CR>", default_opts)
+    -- if keymap starts with `,m`,
+    -- buffer-wide or system-wide commands should be called
     map('n', ',mr', ":lua require('mastodon').reload_statuses()<CR>", default_opts)
 
+    -- If keymap starts with `,t`
+    -- status-wide commands should be called
     map('n', ',tr', ":lua require('mastodon.actions').reply()<CR>", default_opts)
     map('n', ',tb', ":lua require('mastodon.actions').toggle_bookmark()<CR>", default_opts)
     map('n', ',tf', ":lua require('mastodon.actions').toggle_favourite()<CR>", default_opts)
     map('n', ',tB', ":lua require('mastodon.actions').toggle_boost()<CR>", default_opts)
+    map('n', ',tv', ":lua require('mastodon.actions').print_verbose_information()<CR>", default_opts)
   end
 })
 
