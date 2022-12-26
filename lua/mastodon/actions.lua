@@ -91,7 +91,8 @@ M.reply = function()
   local prompt_message = "(mentioning to:" .. displayed_mentions .. ")\n" .. "Enter your message: "
 
   local message_body = vim.fn.input({ prompt = prompt_message })
-  message = message .. " " .. message_body
+  local unescpaed_message_body = string.gsub(message_body, "\\n", "\n")
+  message = message .. " " .. unescpaed_message_body
 
   local content = api_client.reply(status_id, message)
 
