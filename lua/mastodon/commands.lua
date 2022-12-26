@@ -23,7 +23,7 @@ M.toot_message = function()
   local content = api_client.post_message(message)
 
   vim.notify(content, "info", {
-    title = "(Mastodon.nvim) 툿 게시 성공!"
+    title = "(Mastodon.nvim) Posted message"
   })
 
   M.reload_statuses()
