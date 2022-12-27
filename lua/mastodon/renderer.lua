@@ -244,7 +244,7 @@ local function prepare_statuses(statuses, width)
   }
 end
 
-M.render_home_timeline = function(bufnr, win, statuses)
+local function render_statuses(bufnr, win, statuses, buf_name)
   local namespaces = vim.api.nvim_get_namespaces()
   local mastodon_ns = namespaces['MastodonNS']
 
@@ -254,7 +254,7 @@ M.render_home_timeline = function(bufnr, win, statuses)
   local line_numbers = result.line_numbers
   local metadata = result.metadata
 
-  vim.api.nvim_buf_set_name(bufnr, "Mastodon Home")
+  vim.api.nvim_buf_set_name(bufnr, buf_name)
   vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
   vim.api.nvim_buf_set_lines(0, 0, 0, 'true', lines)
   vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
@@ -268,84 +268,22 @@ M.render_home_timeline = function(bufnr, win, statuses)
       virt_text = {{metadata_for_line.data, "Whitespace"}},
     })
   end
+end
+
+M.render_home_timeline = function(bufnr, win, statuses)
+  render_statuses(bufnr, win, statuses, "Mastodon Home")
 end
 
 M.render_bookmarks = function(bufnr, win, statuses)
-  local namespaces = vim.api.nvim_get_namespaces()
-  local mastodon_ns = namespaces['MastodonNS']
-
-  local width = vim.api.nvim_win_get_width(win)
-  local result = prepare_statuses(statuses, width)
-  local lines = result.lines
-  local line_numbers = result.line_numbers
-  local metadata = result.metadata
-
-  vim.api.nvim_buf_set_name(bufnr, "Mastodon Bookmark")
-  vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
-  vim.api.nvim_buf_set_lines(0, 0, 0, 'true', lines)
-  vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
-
-  for _, line_number in ipairs(line_numbers) do
-    vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
-  end
-
-  for _, metadata_for_line in ipairs(metadata) do
-    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
-      virt_text = {{metadata_for_line.data, "Whitespace"}},
-    })
-  end
+  render_statuses(bufnr, win, statuses, "Mastodon Bookmark")
 end
 
 M.render_favourites = function(bufnr, win, statuses)
-  local namespaces = vim.api.nvim_get_namespaces()
-  local mastodon_ns = namespaces['MastodonNS']
-
-  local width = vim.api.nvim_win_get_width(win)
-  local result = prepare_statuses(statuses, width)
-  local lines = result.lines
-  local line_numbers = result.line_numbers
-  local metadata = result.metadata
-
-  vim.api.nvim_buf_set_name(bufnr, "Mastodon Favourites")
-  vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
-  vim.api.nvim_buf_set_lines(0, 0, 0, 'true', lines)
-  vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
-
-  for _, line_number in ipairs(line_numbers) do
-    vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
-  end
-
-  for _, metadata_for_line in ipairs(metadata) do
-    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
-      virt_text = {{metadata_for_line.data, "Whitespace"}},
-    })
-  end
+  render_statuses(bufnr, win, statuses, "Mastodon Favourites")
 end
 
 M.render_replies = function(bufnr, win, statuses)
-  local namespaces = vim.api.nvim_get_namespaces()
-  local mastodon_ns = namespaces['MastodonNS']
-
-  local width = vim.api.nvim_win_get_width(win)
-  local result = prepare_statuses(statuses, width)
-  local lines = result.lines
-  local line_numbers = result.line_numbers
-  local metadata = result.metadata
-
-  vim.api.nvim_buf_set_name(bufnr, "Mastodon Replies")
-  vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
-  vim.api.nvim_buf_set_lines(0, 0, 0, 'true', lines)
-  vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
-
-  for _, line_number in ipairs(line_numbers) do
-    vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
-  end
-
-  for _, metadata_for_line in ipairs(metadata) do
-    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
-      virt_text = {{metadata_for_line.data, "Whitespace"}},
-    })
-  end
+  render_statuses(bufnr, win, statuses, "Mastodon Replies")
 end
 
 M.flatten_nodes = flatten_nodes
