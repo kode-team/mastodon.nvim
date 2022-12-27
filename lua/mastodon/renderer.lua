@@ -244,7 +244,7 @@ local function prepare_statuses(statuses, width)
   }
 end
 
-local function render_statuses(bufnr, win, statuses, buf_name)
+local function render_statuses(bufnr, win, statuses, buf_name, mode)
   local namespaces = vim.api.nvim_get_namespaces()
   local mastodon_ns = namespaces['MastodonNS']
 
@@ -254,36 +254,60 @@ local function render_statuses(bufnr, win, statuses, buf_name)
   local line_numbers = result.line_numbers
   local metadata = result.metadata
 
+  local offset = 0
   vim.api.nvim_buf_set_name(bufnr, buf_name)
   vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
-  vim.api.nvim_buf_set_lines(0, 0, 0, 'true', lines)
+  if mode == "prepend" then
+    offset = 0
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, 'true', lines)
+  elseif mode == "append" then
+    offset = vim.api.nvim_buf_line_count(bufnr)
+    vim.api.nvim_buf_set_lines(bufnr, -1, -1, 'true', lines)
+  end
+
   vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
 
   for _, line_number in ipairs(line_numbers) do
-    vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", line_number, 0, -1)
+    vim.api.nvim_buf_add_highlight(bufnr, mastodon_ns, "MastodonHandle", offset + line_number, 0, -1)
   end
 
   for _, metadata_for_line in ipairs(metadata) do
-    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, metadata_for_line.line_number, 0, {
+    vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, offset + metadata_for_line.line_number, 0, {
       virt_text = {{metadata_for_line.data, "Whitespace"}},
     })
   end
 end
 
-M.render_home_timeline = function(bufnr, win, statuses)
-  render_statuses(bufnr, win, statuses, "Mastodon Home")
+M.render_home_timeline = function(bufnr, win, statuses, options)
+  local mode = "prepend"
+  if options ~= nil then
+    mode = options.mode
+  end
+  render_statuses(bufnr, win, statuses, "Mastodon Home", mode)
 end
 
-M.render_bookmarks = function(bufnr, win, statuses)
-  render_statuses(bufnr, win, statuses, "Mastodon Bookmark")
+M.render_bookmarks = function(bufnr, win, statuses, options)
+  local mode = "prepend"
+  if options ~= nil then
+    mode = options.mode
+  end
+  render_statuses(bufnr, win, statuses, "Mastodon Bookmark", mode)
 end
 
-M.render_favourites = function(bufnr, win, statuses)
-  render_statuses(bufnr, win, statuses, "Mastodon Favourites")
+M.render_favourites = function(bufnr, win, statuses, options)
+  local mode = "prepend"
+  if options ~= nil then
+    mode = options.mode
+  end
+  render_statuses(bufnr, win, statuses, "Mastodon Favourites", mode)
 end
 
-M.render_replies = function(bufnr, win, statuses)
-  render_statuses(bufnr, win, statuses, "Mastodon Replies")
+M.render_replies = function(bufnr, win, statuses, options)
+  local mode = "prepend"
+  if options ~= nil then
+    mode = options.mode
+  end
+  render_statuses(bufnr, win, statuses, "Mastodon Replies", mode)
 end
 
 M.flatten_nodes = flatten_nodes
