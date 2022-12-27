@@ -1,5 +1,9 @@
 local M = {}
 
+M.trim = function(s)
+  return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+end
+
 M.execute_curl = function(curl_command)
   local handle = io.popen(curl_command, 'r')
   local response = handle:read("*a")

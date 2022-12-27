@@ -34,7 +34,7 @@ end
 
 M.add_account = function()
   instance_url = vim.fn.input({ prompt = 'Enter your fediverse instance url (ex: https://social.silicon.moe): '})
-  access_token = vim.fn.input({ prompt = 'Enter your access_token : ' })
+  access_token = utils.trim(vim.fn.input({ prompt = 'Enter your access_token : ' }))
 
   local result = api_client.verify_credentials_for_app(instance_url, access_token)
   local app_name = result["name"]
