@@ -21,6 +21,8 @@ vim.api.nvim_create_autocmd('FileType', {
     -- if keymap starts with `,m`,
     -- buffer-wide or system-wide commands should be called
     map('n', ',mr', ":lua require('mastodon').reload_statuses()<CR>", default_opts)
+    map('n', ',mk', ":lua require('mastodon.commands').fetch_newer_statuses()<CR>", default_opts)
+    map('n', ',mj', ":lua require('mastodon.commands').fetch_older_statuses()<CR>", default_opts)
 
     -- If keymap starts with `,t`
     -- status-wide commands should be called
