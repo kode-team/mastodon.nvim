@@ -83,12 +83,12 @@ M.select_account = function()
       return formatted_name .. account.username .. " / " .. account.instance_url
     end
   }, function(account)
-    local params = { id = account.id }
-    db_client:set_active_account(params)
-    vim.notify("Logged in to " .. account.username .. ' / ' .. account.instance_url)
-    selected_account = account
-
-    return account
+    if account ~= nil then
+      local params = { id = account.id }
+      db_client:set_active_account(params)
+      vim.notify("Logged in to " .. account.username .. ' / ' .. account.instance_url)
+      selected_account = account
+    end
   end)
 
   return selected_account
