@@ -293,7 +293,7 @@ M.fetch_older_statuses = function()
     render_statuses = renderer.render_home_timeline
   end
 
-  if string.find(buf_name, "Mastodon") then
+  if string.find(buf_name, "Mastodon Home") then
     local statuses = fetch_statuses({ max_id = min_status_id })
     if #statuses > 0 then
       min_status_id = statuses[#statuses]["id"]
@@ -321,7 +321,7 @@ M.fetch_newer_statuses = function()
     render_statuses = renderer.render_home_timeline
   end
 
-  if string.find(buf_name, "Mastodon") then
+  if string.find(buf_name, "Mastodon Home") then
     local statuses = fetch_statuses({ min_id = max_status_id })
     if #statuses > 0 then
       max_status_id = statuses[1]["id"]
