@@ -276,6 +276,12 @@ local function render_statuses(bufnr, win, statuses, buf_name, mode)
       virt_text = {{metadata_for_line.data, "Whitespace"}},
     })
   end
+
+  if mode == "prepend" then
+    utils.scroll_to_top()
+  elseif mode == "append" then
+    utils.scroll_to_bottom()
+  end
 end
 
 M.render_home_timeline = function(bufnr, win, statuses, options)

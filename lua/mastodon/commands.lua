@@ -133,8 +133,6 @@ M.fetch_home_timeline = function()
       vim.b[bufnr].min_status_id = min_status_id
     end
   end
-
-  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_bookmarks = function()
@@ -158,8 +156,6 @@ M.fetch_bookmarks = function()
 
   bufnr = vim.api.nvim_get_current_buf()
   renderer.render_bookmarks(bufnr, win, statuses)
-
-  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_favourites = function()
@@ -183,8 +179,6 @@ M.fetch_favourites = function()
 
   bufnr = vim.api.nvim_get_current_buf()
   renderer.render_favourites(bufnr, win, statuses)
-
-  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.fetch_replies = function()
@@ -208,8 +202,6 @@ M.fetch_replies = function()
 
   bufnr = vim.api.nvim_get_current_buf()
   renderer.render_replies(bufnr, win, statuses)
-
-  vim.api.nvim_win_set_cursor(0, {1, 0})
 end
 
 M.reload_statuses = function()
@@ -243,8 +235,6 @@ M.reload_statuses = function()
         vim.b[bufnr].min_status_id = min_status_id
       end
     end
-
-    vim.api.nvim_win_set_cursor(0, {1, 0})
   elseif string.find(buf_name, "Mastodon Bookmark") then
     local new_buf = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(win, new_buf)
@@ -253,8 +243,6 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_bookmarks()
     renderer.render_bookmarks(bufnr, win, statuses)
-
-    vim.api.nvim_win_set_cursor(0, {1, 0})
   elseif string.find(buf_name, "Mastodon Favourites") then
     local new_buf = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(win, new_buf)
@@ -263,8 +251,6 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_favourites()
     renderer.render_favourites(bufnr, win, statuses)
-
-    vim.api.nvim_win_set_cursor(0, {1, 0})
   elseif string.find(buf_name, "Mastodon Replies") then
     local new_buf = vim.api.nvim_create_buf(true, true)
     vim.api.nvim_win_set_buf(win, new_buf)
@@ -273,8 +259,6 @@ M.reload_statuses = function()
 
     local statuses = api_client.fetch_replies()
     renderer.render_favourites(bufnr, win, statuses)
-
-    vim.api.nvim_win_set_cursor(0, {1, 0})
   end
 end
 
