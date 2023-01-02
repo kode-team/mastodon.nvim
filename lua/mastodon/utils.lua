@@ -4,6 +4,15 @@ M.trim = function(s)
   return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
 end
 
+M.scroll_to_top = function()
+  vim.api.nvim_win_set_cursor(0, {1, 0})
+end
+
+M.scroll_to_bottom = function()
+  local target = vim.api.nvim_buf_line_count(0)
+  vim.api.nvim_win_set_cursor(0, {target, 0})
+end
+
 M.execute_curl = function(curl_command)
   local handle = io.popen(curl_command, 'r')
   local response = handle:read("*a")

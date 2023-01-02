@@ -51,9 +51,22 @@ M.get_status = function(status_id)
   return status
 end
 
-M.fetch_home_timeline = function()
+M.fetch_home_timeline = function(params)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
+  local query = {}
+
+  if params.since_id ~= nil then
+    query.since_id = params.since_id
+  end
+
+  if params.max_id ~= nil then
+    query.max_id = params.max_id
+  end
+
+  if params.min_id ~= nil then
+    query.min_id = params.min_id
+  end
 
   local access_token = active_account.access_token
   local instance_url = active_account.instance_url
@@ -61,6 +74,7 @@ M.fetch_home_timeline = function()
   local url = instance_url .. "/api/v1/timelines/home"
 
   local res = curl.get(url, {
+    query = query,
     headers = {
       accept = "application/json",
       content_type = "application/json",
