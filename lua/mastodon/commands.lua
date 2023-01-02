@@ -1,6 +1,6 @@
 -- module represents a lua module for the plugin
 local db_client = require("mastodon.db_client")
-local api_client= require("mastodon.api_client")
+local api_client = require("mastodon.api_client")
 local renderer = require("mastodon.renderer")
 
 local vim = vim
@@ -10,21 +10,21 @@ local M = {}
 vim.notify = require("notify")
 
 vim.notify.setup({
-  background_colour = "#000000"
+  background_colour = "#000000",
 })
 
-local utils = require('mastodon.utils')
+local utils = require("mastodon.utils")
 
 M.toot_message = function()
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
-  local prompt_message = "-- Your current account is " .. active_account.username ..  " --" ..  "\nEnter your message: "
-  local message = vim.fn.input({prompt = prompt_message })
+  local prompt_message = "-- Your current account is " .. active_account.username .. " --" .. "\nEnter your message: "
+  local message = vim.fn.input({ prompt = prompt_message })
   local unescpaed_message = string.gsub(message, "\\n", "\n")
   local content = api_client.post_message(unescpaed_message)
 
   vim.notify(content, "info", {
-    title = "(Mastodon.nvim) Posted message"
+    title = "(Mastodon.nvim) Posted message",
   })
 
   M.reload_statuses()
@@ -33,22 +33,22 @@ M.toot_message = function()
 end
 
 M.add_account = function()
-  instance_url = vim.fn.input({ prompt = 'Enter your fediverse instance url (ex: https://social.silicon.moe): '})
-  access_token = utils.trim(vim.fn.input({ prompt = 'Enter your access_token : ' }))
+  instance_url = vim.fn.input({ prompt = "Enter your fediverse instance url (ex: https://social.silicon.moe): " })
+  access_token = utils.trim(vim.fn.input({ prompt = "Enter your access_token : " }))
 
   local result = api_client.verify_credentials_for_app(instance_url, access_token)
   local app_name = result["name"]
 
   if app_name ~= nil then
     local json = api_client.verify_credentials_for_account(instance_url, access_token)
-    local username = json['display_name'] .. "<@" .. json['username'] .. ">"
-    local description = json['source']['note']
+    local username = json["display_name"] .. "<@" .. json["username"] .. ">"
+    local description = json["source"]["note"]
 
     db_client:add_account({
       instance_url = instance_url,
       access_token = access_token,
-      username     = username,
-      description  = description
+      username = username,
+      description = description,
     })
 
     return false
@@ -73,27 +73,26 @@ M.select_account = function()
   end
   selected_account = nil
   vim.ui.select(accounts, {
-    prompt = 'Select your mastodon account',
+    prompt = "Select your mastodon account",
     format_item = function(account)
-      local formatted_name = ''
+      local formatted_name = ""
 
       if active_account ~= nil and account.id == active_account.id then
-        formatted_name = formatted_name .. '(selected) '
+        formatted_name = formatted_name .. "(selected) "
       end
       return formatted_name .. account.username .. " / " .. account.instance_url
-    end
+    end,
   }, function(account)
     if account ~= nil then
       local params = { id = account.id }
       db_client:set_active_account(params)
-      vim.notify("Logged in to " .. account.username .. ' / ' .. account.instance_url)
+      vim.notify("Logged in to " .. account.username .. " / " .. account.instance_url)
       selected_account = account
     end
   end)
 
   return selected_account
 end
-
 
 M.fetch_home_timeline = function()
   local statuses = api_client.fetch_home_timeline({})
@@ -107,7 +106,7 @@ M.fetch_home_timeline = function()
 
     buf = vim.api.nvim_create_buf(true, true)
   else
-    vim.cmd('vsplit')
+    vim.cmd("vsplit")
     buf = vim.api.nvim_create_buf(true, true)
   end
 
@@ -147,7 +146,7 @@ M.fetch_bookmarks = function()
 
     buf = vim.api.nvim_create_buf(true, true)
   else
-    vim.cmd('vsplit')
+    vim.cmd("vsplit")
     buf = vim.api.nvim_create_buf(true, true)
   end
 
@@ -170,7 +169,7 @@ M.fetch_favourites = function()
 
     buf = vim.api.nvim_create_buf(true, true)
   else
-    vim.cmd('vsplit')
+    vim.cmd("vsplit")
     buf = vim.api.nvim_create_buf(true, true)
   end
 
@@ -193,7 +192,7 @@ M.fetch_replies = function()
 
     buf = vim.api.nvim_create_buf(true, true)
   else
-    vim.cmd('vsplit')
+    vim.cmd("vsplit")
     buf = vim.api.nvim_create_buf(true, true)
   end
 
@@ -261,7 +260,6 @@ M.reload_statuses = function()
     renderer.render_favourites(bufnr, win, statuses)
   end
 end
-
 
 M.fetch_older_statuses = function()
   local win = vim.api.nvim_get_current_win()

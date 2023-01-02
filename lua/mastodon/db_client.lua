@@ -8,9 +8,7 @@ end
 local db_table = {}
 db_table.mastodon_accounts = "mastodon_accounts"
 
-
 local M = {}
-
 
 function M:new()
   local o = {}
@@ -27,13 +25,15 @@ function M:reset_database()
 end
 
 function M:bootstrap(db_root)
-  if self.db then return end
+  if self.db then
+    return
+  end
 
   local project_env = os.getenv("PROJECT_ENV") or "production"
-  db_root = db_root or vim.fn.stdpath('data')
-  local db_name = 'mastodon_accounts'
-  if project_env == 'test' then
-    db_name = db_name .. '_test'
+  db_root = db_root or vim.fn.stdpath("data")
+  local db_name = "mastodon_accounts"
+  if project_env == "test" then
+    db_name = db_name .. "_test"
   end
 
   local db_filename = db_root .. "/" .. db_name .. ".sqlite3"
@@ -49,12 +49,12 @@ function M:bootstrap(db_root)
   if not self.db:exists(db_table.mastodon_accounts) then
     first_run = true
     self.db:create(db_table.mastodon_accounts, {
-      id           = {"INTEGER", "PRIMARY", "KEY"},
-      instance_url = {"TEXT"},
-      access_token = {"TEXT"},
-      username     = {"TEXT"},
-      description  = {"TEXT"},
-      is_active    = {"BOOLEAN"},
+      id = { "INTEGER", "PRIMARY", "KEY" },
+      instance_url = { "TEXT" },
+      access_token = { "TEXT" },
+      username = { "TEXT" },
+      description = { "TEXT" },
+      is_active = { "BOOLEAN" },
     })
   end
 
@@ -77,11 +77,11 @@ function M:set_active_account(params)
   self:bootstrap(nil)
   return self.db:with_open(function(db)
     db:update("mastodon_accounts", {
-      set = { is_active = false}
+      set = { is_active = false },
     })
     db:update("mastodon_accounts", {
       where = params,
-      set = { is_active = true }
+      set = { is_active = true },
     })
     return true
   end)
@@ -100,6 +100,5 @@ function M:select_account(params)
     return db:select("mastodon_accounts", { where = params })
   end)
 end
-
 
 return M

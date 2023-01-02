@@ -5,16 +5,16 @@ M.trim = function(s)
 end
 
 M.scroll_to_top = function()
-  vim.api.nvim_win_set_cursor(0, {1, 0})
+  vim.api.nvim_win_set_cursor(0, { 1, 0 })
 end
 
 M.scroll_to_bottom = function()
   local target = vim.api.nvim_buf_line_count(0)
-  vim.api.nvim_win_set_cursor(0, {target, 0})
+  vim.api.nvim_win_set_cursor(0, { target, 0 })
 end
 
 M.execute_curl = function(curl_command)
-  local handle = io.popen(curl_command, 'r')
+  local handle = io.popen(curl_command, "r")
   local response = handle:read("*a")
   handle.close()
 
@@ -30,10 +30,10 @@ end
 M.utf8_substr = function(text, start, finish)
   local len = finish - start + 1
 
-  if (text == nil) then
+  if text == nil then
     return ""
   end
-  if (len == 0) then
+  if len == 0 then
     return ""
   end
 
@@ -45,34 +45,34 @@ M.utf8_substr = function(text, start, finish)
   local ii = nil
 
   -- NOTE : assigning local variable i  within for statement doesnt allow `i = i +2`
-  for _=1, ix, 1 do
-    if (i > ix) then
+  for _ = 1, ix, 1 do
+    if i > ix then
       break
     end
-    if (q == start) then
+    if q == start then
       min = i
     end
-    if (q <= finish) then
+    if q <= finish then
       max = i
     end
 
-    local char = text:sub(i,i)
+    local char = text:sub(i, i)
     if char == nil then
       break
     end
 
     local code = char:byte()
-    if (code >= 0 and code <= 127) then
+    if code >= 0 and code <= 127 then
       i = i + 0
-    elseif (bit.band(code, 0xE0) == 0xC0) then
+    elseif bit.band(code, 0xE0) == 0xC0 then
       i = i + 1
-    elseif (bit.band(code, 0xF0) == 0xE0) then
+    elseif bit.band(code, 0xF0) == 0xE0 then
       i = i + 2
-    elseif (bit.band(code, 0xF8) == 0xF0) then
+    elseif bit.band(code, 0xF8) == 0xF0 then
       i = i + 3
-    elseif (bit.band(code, 0xFC) == 0xF8) then
+    elseif bit.band(code, 0xFC) == 0xF8 then
       i = i + 4
-    elseif (bit.band(code, 0xFE) == 0xFC) then
+    elseif bit.band(code, 0xFE) == 0xFC then
       i = i + 5
     else
       return ""
@@ -83,7 +83,7 @@ M.utf8_substr = function(text, start, finish)
     i = i + 1
   end
 
-  if (q <= finish or len == 0) then
+  if q <= finish or len == 0 then
     max = ii
   end
 
@@ -109,7 +109,6 @@ function Stack.new()
   o.items = {}
   return o
 end
-
 
 Stack.__index = Stack
 

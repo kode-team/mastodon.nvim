@@ -1,4 +1,3 @@
-
 local db_client = require("mastodon.db_client")
 
 describe("setup", function()
@@ -9,24 +8,24 @@ describe("setup", function()
 
   it("Added accounts can be displayed in select view", function()
     db_client:add_account({
-      username = 'hello',
-      access_token = 'hello',
-      instance_url = 'hello',
-      description = 'world',
+      username = "hello",
+      access_token = "hello",
+      instance_url = "hello",
+      description = "world",
       is_active = false,
     })
     db_client:add_account({
-      username = 'hello',
-      access_token = 'hello',
-      instance_url = 'hello',
-      description = 'world',
+      username = "hello",
+      access_token = "hello",
+      instance_url = "hello",
+      description = "world",
       is_active = false,
     })
     db_client:add_account({
-      username = 'hello',
-      access_token = 'hello',
-      instance_url = 'hello',
-      description = 'world',
+      username = "hello",
+      access_token = "hello",
+      instance_url = "hello",
+      description = "world",
       is_active = false,
     })
 

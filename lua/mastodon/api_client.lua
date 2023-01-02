@@ -11,7 +11,7 @@ M.verify_credentials_for_app = function(instance_url, access_token)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
   local result = vim.fn.json_decode(res.body)
   return result
@@ -24,7 +24,7 @@ M.verify_credentials_for_account = function(instance_url, access_token)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
   local result = vim.fn.json_decode(res.body)
   return result
@@ -44,7 +44,7 @@ M.get_status = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -79,7 +79,7 @@ M.fetch_home_timeline = function(params)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local statuses = vim.fn.json_decode(res.body)
@@ -100,7 +100,7 @@ M.fetch_bookmarks = function()
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local statuses = vim.fn.json_decode(res.body)
@@ -121,7 +121,7 @@ M.fetch_favourites = function()
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local statuses = vim.fn.json_decode(res.body)
@@ -145,15 +145,15 @@ M.fetch_replies = function()
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local notifications = vim.fn.json_decode(res.body)
   local statuses = {}
 
   for _, notification in ipairs(notifications) do
-    if notification['type'] == 'mention' then
-      table.insert(statuses, notification['status'])
+    if notification["type"] == "mention" then
+      table.insert(statuses, notification["status"])
     end
   end
 
@@ -174,11 +174,11 @@ M.add_bookmark = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Added to bookmarks", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -199,11 +199,11 @@ M.cancel_bookmark = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Removed from bookmarks", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -224,11 +224,11 @@ M.add_favourite = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Added to favourites", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -249,11 +249,11 @@ M.cancel_favourite = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Removed from favourites", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -274,11 +274,11 @@ M.boost = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Boosted", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -299,11 +299,11 @@ M.cancel_boost = function(status_id)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   vim.notify("Boost canceled", "info", {
-    title = "Mastodon.nvim"
+    title = "Mastodon.nvim",
   })
 
   local status = vim.fn.json_decode(res.body)
@@ -332,7 +332,7 @@ M.post_message = function(message)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local content = vim.fn.json_decode(res.body)["content"]
@@ -361,7 +361,7 @@ M.reply = function(status_id, message)
       accept = "application/json",
       content_type = "application/json",
       authorization = "Bearer " .. access_token,
-    }
+    },
   })
 
   local content = vim.fn.json_decode(res.body)["content"]

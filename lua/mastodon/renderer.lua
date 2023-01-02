@@ -4,15 +4,15 @@ local Parser = require("mastodon.parser")
 local M = {}
 
 local function split_by_chunk(text, chunk_size)
-    local s = {}
-    for i=1, #text, chunk_size do
-        s[#s+1] = utils.utf8_substr(text, i, i + chunk_size - 1)
-    end
-    return s
+  local s = {}
+  for i = 1, #text, chunk_size do
+    s[#s + 1] = utils.utf8_substr(text, i, i + chunk_size - 1)
+  end
+  return s
 end
 
 local function is_reblog(status)
-  return status['reblog'] ~= vim.NIL
+  return status["reblog"] ~= vim.NIL
 end
 
 local function flatten_nodes(list, node)
@@ -33,21 +33,21 @@ local function render_lines(nodes)
     local text = node.text
 
     if tag ~= nil then
-      if tag:sub(1,1) ~= '/' then
-        if tag == 'p' then
+      if tag:sub(1, 1) ~= "/" then
+        if tag == "p" then
           if #line ~= 0 then
             table.insert(lines, line)
             line = ""
           end
-        elseif tag == 'blockquote' then
+        elseif tag == "blockquote" then
           if #line ~= 0 then
             table.insert(lines, line)
             line = ""
           end
-        elseif tag == 'br' or tag == 'br/' or tag == 'br /' then
+        elseif tag == "br" or tag == "br/" or tag == "br /" then
           table.insert(lines, line)
           line = ""
-        elseif tag == 'ul' or tag == 'ol' then
+        elseif tag == "ul" or tag == "ol" then
           list_depth = list_depth + 1
           if #line ~= 0 then
             table.insert(lines, line)
@@ -55,13 +55,13 @@ local function render_lines(nodes)
           end
         end
       else
-        if tag:sub(1,3) == "/li" then
+        if tag:sub(1, 3) == "/li" then
           table.insert(lines, string.rep(" ", list_depth) .. "*" .. line)
           line = ""
-        elseif tag:sub(1,11) == '/blockquote' then
+        elseif tag:sub(1, 11) == "/blockquote" then
           table.insert(lines, line)
           line = ""
-        elseif tag:sub(1,2) == "/p" then
+        elseif tag:sub(1, 2) == "/p" then
           table.insert(lines, line)
           line = ""
         end
@@ -85,29 +85,29 @@ local function prepare_statuses(statuses, width)
   local line_number = 0
   local line_numbers = {}
 
-  local reply_action_icon = '💬'
-  local favourite_action_icon = '💗'
-  local boost_action_icon = '🚀'
-  local bookmark_action_icon = '🔖'
-  local check_icon = '✔️'
+  local reply_action_icon = "💬"
+  local favourite_action_icon = "💗"
+  local boost_action_icon = "🚀"
+  local bookmark_action_icon = "🔖"
+  local check_icon = "✔️"
 
   for i, status in ipairs(statuses) do
     local target_status = nil
     local line = nil
-    local account = status['account']
+    local account = status["account"]
     if is_reblog(status) then
-      target_status = status['reblog']
-      line = "@" .. target_status['account']['username']
-      line = line .. "(" .. target_status['account']['display_name']  .. ")"
-      line = line .. " --- boosted by @" .. account['username']
-      line = line .. "(" .. (account['display_name']) .. ")"
+      target_status = status["reblog"]
+      line = "@" .. target_status["account"]["username"]
+      line = line .. "(" .. target_status["account"]["display_name"] .. ")"
+      line = line .. " --- boosted by @" .. account["username"]
+      line = line .. "(" .. account["display_name"] .. ")"
     else
       target_status = status
-      line = "@" .. account['acct']
-      line = line .. "(" .. (account['display_name']) .. ")"
+      line = "@" .. account["acct"]
+      line = line .. "(" .. account["display_name"] .. ")"
     end
-    local status_id = status['id']
-    local url = status['uri']
+    local status_id = status["id"]
+    local url = status["uri"]
     local json = vim.fn.json_encode({
       status_id = status_id,
       url = url,
@@ -124,14 +124,14 @@ local function prepare_statuses(statuses, width)
     local mentions = status["mentions"]
     local displayed_mentions = ""
     for _, mention in ipairs(mentions) do
-      displayed_mentions = displayed_mentions .. " @" .. mention['acct']
+      displayed_mentions = displayed_mentions .. " @" .. mention["acct"]
     end
 
     if #mentions == 0 then
       displayed_mentions = " self"
     end
 
-    if status['in_reply_to_id'] ~= vim.NIL then
+    if status["in_reply_to_id"] ~= vim.NIL then
       table.insert(lines, "(Replying to:" .. displayed_mentions .. ")")
       table.insert(metadata, {
         line_number = line_number,
@@ -139,7 +139,6 @@ local function prepare_statuses(statuses, width)
       })
       line_number = line_number + 1
     end
-
 
     table.insert(lines, "")
     table.insert(line_numbers, line_number)
@@ -149,7 +148,7 @@ local function prepare_statuses(statuses, width)
     })
     line_number = line_number + 1
 
-    local whole_message = target_status['content']
+    local whole_message = target_status["content"]
 
     local parser = Parser:new(whole_message)
     local root_node = parser:parse()
@@ -175,9 +174,9 @@ local function prepare_statuses(statuses, width)
     line_number = line_number + 1
 
     local media_attachments = target_status["media_attachments"]
-      if #media_attachments ~= 0 then
+    if #media_attachments ~= 0 then
       for j, attachment in ipairs(media_attachments) do
-        table.insert(lines, "Attachment " .. j .. ") " .. attachment['url'])
+        table.insert(lines, "Attachment " .. j .. ") " .. attachment["url"])
         table.insert(metadata, {
           line_number = line_number,
           data = json,
@@ -193,13 +192,13 @@ local function prepare_statuses(statuses, width)
       line_number = line_number + 1
     end
 
-    local bookmarked = target_status['bookmarked']
-    local favourited = target_status['favourited']
-    local reblogged  = target_status['reblogged']
+    local bookmarked = target_status["bookmarked"]
+    local favourited = target_status["favourited"]
+    local reblogged = target_status["reblogged"]
 
-    local reblogs_count = target_status['reblogs_count']
-    local favourites_count = target_status['favourites_count']
-    local replies_count = target_status['replies_count']
+    local reblogs_count = target_status["reblogs_count"]
+    local favourites_count = target_status["favourites_count"]
+    local replies_count = target_status["replies_count"]
 
     line = " " .. reply_action_icon
     line = line .. "  " .. replies_count
@@ -228,7 +227,7 @@ local function prepare_statuses(statuses, width)
     })
     line_number = line_number + 1
 
-    line = '-----------------------'
+    line = "-----------------------"
     table.insert(lines, line)
     table.insert(metadata, {
       line_number = line_number,
@@ -246,7 +245,7 @@ end
 
 local function render_statuses(bufnr, win, statuses, buf_name, mode)
   local namespaces = vim.api.nvim_get_namespaces()
-  local mastodon_ns = namespaces['MastodonNS']
+  local mastodon_ns = namespaces["MastodonNS"]
 
   local width = vim.api.nvim_win_get_width(win)
   local result = prepare_statuses(statuses, width)
@@ -259,10 +258,10 @@ local function render_statuses(bufnr, win, statuses, buf_name, mode)
   vim.api.nvim_buf_set_option(bufnr, "filetype", "mastodon")
   if mode == "prepend" then
     offset = 0
-    vim.api.nvim_buf_set_lines(bufnr, 0, 0, 'true', lines)
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, "true", lines)
   elseif mode == "append" then
     offset = vim.api.nvim_buf_line_count(bufnr)
-    vim.api.nvim_buf_set_lines(bufnr, -1, -1, 'true', lines)
+    vim.api.nvim_buf_set_lines(bufnr, -1, -1, "true", lines)
   end
 
   vim.api.nvim_win_set_hl_ns(win, mastodon_ns)
@@ -273,7 +272,7 @@ local function render_statuses(bufnr, win, statuses, buf_name, mode)
 
   for _, metadata_for_line in ipairs(metadata) do
     vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, offset + metadata_for_line.line_number, 0, {
-      virt_text = {{metadata_for_line.data, "Whitespace"}},
+      virt_text = { { metadata_for_line.data, "Whitespace" } },
     })
   end
 
