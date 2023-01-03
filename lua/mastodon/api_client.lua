@@ -4,6 +4,57 @@ local db_client = require("mastodon.db_client")
 
 local M = {}
 
+local function generate_pagination_header(headers)
+  local header_line = ""
+
+  for _, line in ipairs(headers) do
+    if string.find(line, "link: ") then
+      header_line = line
+    end
+  end
+
+  local line = header_line:sub(6, #header_line)
+  local idx = string.find(line, ",")
+
+  if idx then
+    local tokens = {}
+    table.insert(tokens, line:sub(1, idx - 1))
+    table.insert(tokens, line:sub(idx + 1, #line))
+
+    local prev = nil
+    local next = nil
+
+    for _, token in ipairs(tokens) do
+      if string.find(token, "\"prev\"") then
+        prev = token
+      end
+
+      if string.find(token, "\"next\"") then
+        next = token
+      end
+    end
+
+    return {
+      prev = prev,
+      next = next,
+    }
+  else
+    if string.find(line, "\"prev\"") then
+      return {
+        next = nil,
+        prev = line,
+      }
+    elseif string.find(line, "\"next\"") then
+      return {
+        next = line,
+        prev = nil,
+      }
+    end
+
+    return {}
+  end
+end
+
 M.verify_credentials_for_app = function(instance_url, access_token)
   local url = instance_url .. "/api/v1/apps/verify_credentials"
   local res = curl.get(url, {
@@ -83,10 +134,13 @@ M.fetch_home_timeline = function(params)
   })
 
   local statuses = vim.fn.json_decode(res.body)
-  return statuses
+  return {
+    headers = {},
+    data = statuses,
+  }
 end
 
-M.fetch_bookmarks = function()
+M.fetch_bookmarks = function(params)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
 
@@ -96,6 +150,7 @@ M.fetch_bookmarks = function()
   local url = instance_url .. "/api/v1/bookmarks"
 
   local res = curl.get(url, {
+    query = params,
     headers = {
       accept = "application/json",
       content_type = "application/json",
@@ -104,10 +159,13 @@ M.fetch_bookmarks = function()
   })
 
   local statuses = vim.fn.json_decode(res.body)
-  return statuses
+  return {
+    headers = generate_pagination_header(res.headers),
+    data = statuses,
+  }
 end
 
-M.fetch_favourites = function()
+M.fetch_favourites = function(params)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
 
@@ -117,6 +175,7 @@ M.fetch_favourites = function()
   local url = instance_url .. "/api/v1/favourites"
 
   local res = curl.get(url, {
+    query = params,
     headers = {
       accept = "application/json",
       content_type = "application/json",
@@ -125,10 +184,13 @@ M.fetch_favourites = function()
   })
 
   local statuses = vim.fn.json_decode(res.body)
-  return statuses
+  return {
+    headers = generate_pagination_header(res.headers),
+    data = statuses,
+  }
 end
 
-M.fetch_replies = function()
+M.fetch_replies = function(params)
   local active_accounts = db_client:get_active_account()
   local active_account = active_accounts[1]
 
@@ -137,10 +199,22 @@ M.fetch_replies = function()
 
   local url = instance_url .. "/api/v1/notifications"
 
+  local query = {
+    types = "mention"
+  }
+
+  if params then
+    if params.max_id ~= nil then
+      query.max_id = params.max_id
+    end
+
+    if params.min_id ~= nil then
+      query.min_id = params.min_id
+    end
+  end
+
   local res = curl.get(url, {
-    query = {
-      types = "mention",
-    },
+    query = query,
     headers = {
       accept = "application/json",
       content_type = "application/json",
@@ -157,7 +231,10 @@ M.fetch_replies = function()
     end
   end
 
-  return statuses
+  return {
+    headers = generate_pagination_header(res.headers),
+    data = statuses,
+  }
 end
 
 M.add_bookmark = function(status_id)

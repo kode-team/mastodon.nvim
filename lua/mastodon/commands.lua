@@ -95,7 +95,10 @@ M.select_account = function()
 end
 
 M.fetch_home_timeline = function()
-  local statuses = api_client.fetch_home_timeline({})
+  local result = api_client.fetch_home_timeline({})
+  local statuses = result.data
+  local headers = result.headers
+
   local bufnr = 0
   local buf = nil
   local target_buf_name = "Mastodon Home"
@@ -135,7 +138,10 @@ M.fetch_home_timeline = function()
 end
 
 M.fetch_bookmarks = function()
-  local statuses = api_client.fetch_bookmarks()
+  local result = api_client.fetch_bookmarks()
+  local statuses = result.data
+  local headers = result.headers
+
   local bufnr = 0
   local buf = nil
   local target_buf_name = "Mastodon Bookmark"
@@ -154,11 +160,18 @@ M.fetch_bookmarks = function()
   vim.api.nvim_win_set_buf(win, buf)
 
   bufnr = vim.api.nvim_get_current_buf()
+
+  vim.b[bufnr].prev = headers.prev
+  vim.b[bufnr].next = headers.next
+
   renderer.render_bookmarks(bufnr, win, statuses)
 end
 
 M.fetch_favourites = function()
-  local statuses = api_client.fetch_favourites()
+  local result = api_client.fetch_favourites()
+  local statuses = result.data
+  local headers = result.headers
+
   local bufnr = 0
   local buf = nil
   local target_buf_name = "Mastodon Favourites"
@@ -177,11 +190,18 @@ M.fetch_favourites = function()
   vim.api.nvim_win_set_buf(win, buf)
 
   bufnr = vim.api.nvim_get_current_buf()
+
+  vim.b[bufnr].prev = headers.prev
+  vim.b[bufnr].next = headers.next
+
   renderer.render_favourites(bufnr, win, statuses)
 end
 
 M.fetch_replies = function()
-  local statuses = api_client.fetch_replies()
+  local result = api_client.fetch_replies()
+  local statuses = result.data
+  local headers = result.headers
+
   local bufnr = 0
   local buf = nil
   local target_buf_name = "Mastodon Replies"
@@ -200,6 +220,10 @@ M.fetch_replies = function()
   vim.api.nvim_win_set_buf(win, buf)
 
   bufnr = vim.api.nvim_get_current_buf()
+
+  vim.b[bufnr].prev = headers.prev
+  vim.b[bufnr].next = headers.next
+
   renderer.render_replies(bufnr, win, statuses)
 end
 
@@ -227,11 +251,17 @@ M.reload_statuses = function()
     render_statuses = renderer.render_replies
   end
 
-  local statuses = fetch_statuses({})
+  local result = fetch_statuses({})
+  local statuses = result.data
+  local headers = result.headers
+
   local new_buf = vim.api.nvim_create_buf(true, true)
   vim.api.nvim_win_set_buf(win, new_buf)
   vim.api.nvim_buf_delete(bufnr, {})
   bufnr = new_buf
+
+  vim.b[bufnr].prev = headers.prev
+  vim.b[bufnr].next = headers.next
 
   local max_status_id = nil
   local min_status_id = nil
@@ -256,7 +286,9 @@ end
 M.fetch_older_statuses = function()
   local win = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
+
   local min_status_id = vim.b[bufnr].min_status_id
+  local next = vim.b[bufnr].next
 
   local buf_name = vim.api.nvim_buf_get_name(bufnr)
   local fetch_statuses = api_client.fetch_home_timeline
@@ -265,19 +297,49 @@ M.fetch_older_statuses = function()
   if string.find(buf_name, "Mastodon Home") then
     fetch_statuses = api_client.fetch_home_timeline
     render_statuses = renderer.render_home_timeline
+  elseif string.find(buf_name, "Mastodon Bookmark") then
+    fetch_statuses = api_client.fetch_bookmarks
+    render_statuses = renderer.render_bookmarks
+  elseif string.find(buf_name, "Mastodon Favourites") then
+    fetch_statuses = api_client.fetch_favourites
+    render_statuses = renderer.render_favourites
+  elseif string.find(buf_name, "Mastodon Replies") then
+    fetch_statuses = api_client.fetch_replies
+    render_statuses = renderer.render_replies
   end
 
-  if string.find(buf_name, "Mastodon Home") then
-    local statuses = fetch_statuses({ max_id = min_status_id })
-    if #statuses > 0 then
-      min_status_id = statuses[#statuses]["id"]
+  if string.find(buf_name, "Mastodon") then
+    if string.find(buf_name, "Mastodon Home") then
+      local statuses = fetch_statuses({ max_id = min_status_id }).data
+      if #statuses > 0 then
+        min_status_id = statuses[#statuses]["id"]
 
-      if min_status_id ~= nil then
-        vim.b[bufnr].min_status_id = min_status_id
+        if min_status_id ~= nil then
+          vim.b[bufnr].min_status_id = min_status_id
+        end
       end
-    end
 
-    render_statuses(bufnr, win, statuses, { mode = "append" })
+      render_statuses(bufnr, win, statuses, { mode = "append" })
+    else
+      if next == nil then
+        vim.notify("There is no more contents to fetch", "info", {
+          title = "Mastodon.nvim"
+        })
+        return
+      end
+
+      local max_id = nil
+      local _, _, _, matched = string.find(next, "(max_id=)(%d+)")
+      max_id = matched
+
+      local result = fetch_statuses({ max_id = max_id })
+      local statuses = result.data
+      local headers = result.headers
+
+      vim.b[bufnr].next = headers.next
+
+      render_statuses(bufnr, win, statuses, { mode = "append" })
+    end
   end
 end
 
@@ -285,6 +347,7 @@ M.fetch_newer_statuses = function()
   local win = vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_get_current_buf()
   local max_status_id = vim.b[bufnr].max_status_id
+  local prev = vim.b[bufnr].prev
 
   local buf_name = vim.api.nvim_buf_get_name(bufnr)
   local fetch_statuses = api_client.fetch_home_timeline
@@ -293,19 +356,46 @@ M.fetch_newer_statuses = function()
   if string.find(buf_name, "Mastodon Home") then
     fetch_statuses = api_client.fetch_home_timeline
     render_statuses = renderer.render_home_timeline
+  elseif string.find(buf_name, "Mastodon Bookmark") then
+    fetch_statuses = api_client.fetch_bookmarks
+    render_statuses = renderer.render_bookmarks
+  elseif string.find(buf_name, "Mastodon Favourites") then
+    fetch_statuses = api_client.fetch_favourites
+    render_statuses = renderer.render_favourites
+  elseif string.find(buf_name, "Mastodon Replies") then
+    fetch_statuses = api_client.fetch_replies
+    render_statuses = renderer.render_replies
   end
 
-  if string.find(buf_name, "Mastodon Home") then
-    local statuses = fetch_statuses({ min_id = max_status_id })
-    if #statuses > 0 then
-      max_status_id = statuses[1]["id"]
+  if string.find(buf_name, "Mastodon") then
+    if string.find(buf_name, "Mastodon Home") then
+      local statuses = fetch_statuses({ min_id = max_status_id }).data
+      if #statuses > 0 then
+        max_status_id = statuses[1]["id"]
 
-      if max_status_id ~= nil then
-        vim.b[bufnr].max_status_id = max_status_id
+        if max_status_id ~= nil then
+          vim.b[bufnr].max_status_id = max_status_id
+        end
       end
-    end
 
-    render_statuses(bufnr, win, statuses, { mode = "prepend" })
+      render_statuses(bufnr, win, statuses, { mode = "prepend" })
+    else
+      if prev == nil then
+        return
+      end
+
+      local min_id = nil
+      local _, _, _, matched = string.find(prev, "(min_id=)(%d+)")
+      min_id = matched
+
+      local result = fetch_statuses({ min_id = min_id })
+      local statuses = result.data
+      local headers = result.headers
+
+      vim.b[bufnr].prev = headers.prev
+
+      render_statuses(bufnr, win, statuses, { mode = "prepend" })
+    end
   end
 end
 
