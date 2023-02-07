@@ -20,8 +20,8 @@ M.toot_message = function()
   local active_account = active_accounts[1]
   local prompt_message = "-- Your current account is " .. active_account.username .. " --" .. "\nEnter your message: "
   local message = vim.fn.input({ prompt = prompt_message })
-  local unescpaed_message = string.gsub(message, "\\n", "\n")
-  local content = api_client.post_message(unescpaed_message)
+  local unescaped_message = string.gsub(message, "\\n", "\n")
+  local content = api_client.post_message(unescaped_message)
 
   vim.notify(content, "info", {
     title = "(Mastodon.nvim) Posted message",
