@@ -401,7 +401,7 @@ M.post_message = function(message)
       media_ids = {},
       sensitive = false,
       spoiler_text = "",
-      visibility = "unlisted",
+      visibility = vim.g.mastodon_toot_visibility or "unlisted",
       poll = nil,
       language = "ko",
     }),
