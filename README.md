@@ -38,6 +38,8 @@ mastodon.nvim is Mastodon Client for Neovim.
 
 ## Installation
 
+### using packer.nvim
+
 If you are using packer.nvim, you can install this plugin as below:
 
 ```lua
@@ -53,6 +55,26 @@ use {
   end
 }
 ```
+
+### using lazy.nvim
+
+If you are using lazy.nvim, you can install this plugin as below:
+
+```lua
+{
+  "kode-team/mastodon.nvim",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "rcarriga/nvim-notify",
+    "kkharji/sqlite.lua",
+  },
+  config = function()
+    require("mastodon").setup()
+  end
+}
+```
+
+(thanks to @kimusan)
 
 ## Usage
 
