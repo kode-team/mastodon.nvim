@@ -37,6 +37,7 @@ function M:bootstrap(db_root)
   end
 
   local db_filename = db_root .. "/" .. db_name .. ".sqlite3"
+  os.execute("mkdir -p " .. db_root)
   self.db = sqlite:open(db_filename)
 
   if not self.db then
