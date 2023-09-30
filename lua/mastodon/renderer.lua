@@ -272,7 +272,8 @@ local function render_statuses(bufnr, win, statuses, buf_name, mode)
 
   for _, metadata_for_line in ipairs(metadata) do
     vim.api.nvim_buf_set_extmark(bufnr, mastodon_ns, offset + metadata_for_line.line_number, 0, {
-      virt_text = { { metadata_for_line.data, "Whitespace" } },
+      virt_text = { { metadata_for_line.data, "MastodonMetadata" } },
+      hl_mode = "blend",
     })
   end
 

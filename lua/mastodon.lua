@@ -14,10 +14,17 @@ M.setup = function(args)
   M.config = vim.tbl_deep_extend("force", M.config, args or {})
 
   namespace = vim.api.nvim_create_namespace("MastodonNS")
+  local hl_for_whitespace = vim.api.nvim_get_hl(0, { name = "NormalFloat" })
+
   vim.api.nvim_set_hl(namespace, "MastodonHandle", {
     fg = "#000000",
     bg = "#ffffff",
     underline = true,
+  })
+  vim.api.nvim_set_hl(namespace, "MastodonMetadata", {
+    fg = hl_for_whitespace.bg,
+    bg = hl_for_whitespace.bg,
+    blend = 10,
   })
 end
 
