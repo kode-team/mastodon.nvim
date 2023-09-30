@@ -20,6 +20,12 @@ M.toot_message = function()
   local active_account = active_accounts[1]
   local prompt_message = "-- Your current account is " .. active_account.username .. " --" .. "\nEnter your message: "
   local message = vim.fn.input({ prompt = prompt_message })
+  if message == "" then
+    vim.notify("You did not input message", "error", {
+      title = "(Mastodon.nvim) Failed to posting message",
+    })
+    return
+  end
   local unescaped_message = string.gsub(message, "\\n", "\n")
   local content = api_client.post_message(unescaped_message)
 
