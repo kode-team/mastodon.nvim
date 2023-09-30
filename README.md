@@ -158,6 +158,35 @@ Within `Mastodon Buffer`, each line has metadata which includes status's id and 
 * `,tB` - Enables you to boost current status
 * `,tv` - Enables you to see current status's raw data
 
+## Keymaps
+
+```lua
+require("mastodon").setup({
+  keymaps = {
+    ["buffer-wide-keymaps"] = {
+      ["reload-statuses"] = ",mr",
+      ["scroll-to-top"] = ",mk",
+      ["scroll-to-bottom"] = ",mj",
+
+      ["reply"] = ",tr",
+      ["bookmark"] = ",tb",
+      ["favourite"] = ",tf",
+      ["boost"] = ",tB",
+      ["print"] = ",tv",
+    },
+    ["system-wide-keymaps"] = {
+      ["home-timeline"] = ",mh",
+      ["bookmarks"] = ",mb",
+      ["favourites"] = ",mf",
+      ["mentions"] = ",mR",
+
+      ["post-message"] = ",mw",
+      ["select-account"] = ",ms",
+    },
+  }
+})
+```
+
 # Explanation for developers
 
 
