@@ -9,7 +9,8 @@ vim.api.nvim_create_user_command("MastodonReload", require("mastodon").reload_st
 
 local operations = require("mastodon").operations
 
-local keymaps = vim.g.mastodon_config["keymaps"]
+local mastodon_config = vim.g.mastodon_config or {}
+local keymaps = mastodon_config["keymaps"] or {}
 local default_keymaps = require("mastodon").default_config["keymaps"]
 
 local map = vim.api.nvim_set_keymap
